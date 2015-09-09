@@ -1,0 +1,60 @@
+{
+  "name": "wykop-v2-typescript",
+  "version": "0.0.1",
+  "description": "Wykop API v2 wrapper",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "lib /**/*"
+  ],
+  "prepare": "npm run build",
+  "prepublishOnly": "npm run test && npm run lint",
+  "preversion": "npm run lint",
+  "scripts": {
+    "build": "tsc",
+    "test": "jest",
+    "lint": "eslint ."
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Vegann/wykop-v2-es6-typescript.git"
+  },
+  "author": "vegann",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Vegann/wykop-v2-es6-typescript/issues"
+  },
+  "homepage": "https://github.com/Vegann/wykop-v2-es6-typescript#readme",
+  "keywords": [
+    "wykop",
+    "wykop-api",
+    "wykop-apiv2",
+    "v2",
+    "Wykop.pl",
+    "wrapper"
+  ],
+  "dependencies": {
+    "lodash": "^4.17.13",
+    "node-fetch": "^2.6.0"
+  },
+  "devDependencies": {
+    "@types/jest": "^25.2.1",
+    "@types/lodash": "^4.14.149",
+    "@types/node": "^13.11.0",
+    "@types/node-fetch": "^2.5.5",
+    "@typescript-eslint/eslint-plugin": "^2.27.0",
+    "@typescript-eslint/parser": "^2.27.0",
+    "dotenv": "^8.2.0",
+    "eslint": "^6.8.0",
+    "eslint-config-airbnb-base": "^14.1.0",
+    "eslint-config-prettier": "^6.10.1",
+    "eslint-plugin-import": "^2.20.2",
+    "eslint-plugin-jest": "^23.8.2",
+    "eslint-plugin-prettier": "^3.1.2",
+    "eslint-plugin-you-dont-need-lodash-underscore": "^6.10.0",
+    "jest": "^25.2.7",
+    "prettier": "^2.0.4",
+    "ts-jest": "^25.3.1",
+    "typescript": "^3.8.3"
+  }
+}
