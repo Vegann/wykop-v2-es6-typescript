@@ -1,5 +1,4 @@
 const gulp = require('gulp');
-const babel = require('gulp-babel');
 const ts = require('gulp-typescript');
 
 const tsProject = ts.createProject('tsconfig.json');
