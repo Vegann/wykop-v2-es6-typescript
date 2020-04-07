@@ -1,12 +1,13 @@
-var gulp = require('gulp');
-var babel = require('gulp-babel');
+const gulp = require('gulp');
+const babel = require('gulp-babel');
+const ts = require('gulp-typescript');
 
-gulp.task('default', function () {
-	return gulp.src('lib/*.js')
-		.pipe(babel())
-		.pipe(gulp.dest('dist'));
-});
+const tsProject = ts.createProject('tsconfig.json');
 
-gulp.task('watch', function(){
-	gulp.watch('lib/*.js', ['default']);
+gulp.task('default', () => tsProject.src()
+  .pipe(tsProject())
+  .pipe(gulp.dest('dist')));
+
+gulp.task('watch:ts', () => {
+  gulp.watch('lib/*.ts', ['default']);
 });
