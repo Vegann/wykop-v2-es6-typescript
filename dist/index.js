@@ -1,5 +1,8 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+/* eslint-disable no-underscore-dangle */
+// import { strict as assert } from 'assert';
+// import { createHash } from 'crypto';
 var node_fetch_1 = require("node-fetch");
 // // import omit from 'lodash/omit';
 // function md5(secret: string, url: string, sortedPost: string = ''): string {
@@ -22,5 +25,4 @@ var Wykop = /** @class */ (function () {
     };
     return Wykop;
 }());
-var wykop = new Wykop();
-var req = wykop.request(['Entries', 'Hot']).then(function (res) { return res.json(); }).then(function (data) { return console.log(data); }).catch(function (err) { return console.log(err); });
+exports.default = Wykop;
