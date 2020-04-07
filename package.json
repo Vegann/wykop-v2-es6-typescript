@@ -41,7 +41,7 @@
     "eslint-plugin-import": "^2.20.2",
     "eslint-plugin-jest": "^23.8.2",
     "eslint-plugin-you-dont-need-lodash-underscore": "^6.10.0",
-    "gulp": "4.0.0",
+    "gulp": "4.0.2",
     "gulp-typescript": "^6.0.0-alpha.1",
     "jest": "^25.2.7",
     "ts-jest": "^25.3.1",
