@@ -1,24 +1,27 @@
 {
-  "name": "wykop-es6",
-  "version": "0.5.1",
-  "description": "Wykop.pl API wrapper",
+  "name": "wykop-v2-es6-typescript",
+  "version": "0.1",
+  "description": "Wykop API v2 wrapper",
   "main": "./dist/index.js",
+  "private": true,
   "scripts": {
     "test": "jest"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/bnt44/wykop-es6.git"
+    "url": "git+https://github.com/Vegann/wykop-v2-es6-typescript.git"
   },
-  "author": "MirkoStats <git@mirkostats.pl>",
+  "author": "Vegann",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/bnt44/wykop-es6/issues"
+    "url": "https://github.com/Vegann/wykop-v2-es6-typescript/issues"
   },
-  "homepage": "https://github.com/bnt44/wykop-es6#readme",
+  "homepage": "https://github.com/Vegann/wykop-v2-es6-typescript#readme",
   "keywords": [
     "wykop",
     "wykop-api",
+    "wykop-apiv2",
+    "v2",
     "Wykop.pl",
     "wrapper"
   ],
