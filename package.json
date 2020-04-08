@@ -1,5 +1,5 @@
 {
-  "name": "wykop-v2-es6-typescript",
+  "name": "wykop-v2-typescript",
   "version": "0.0.1",
   "description": "Wykop API v2 wrapper",
   "main": "./dist/index.js",
@@ -10,7 +10,6 @@
   "prepare": "npm run build",
   "prepublishOnly": "npm run test && npm run lint",
   "preversion": "npm run lint",
-  "private": true,
   "scripts": {
     "build": "tsc",
     "test": "jest",
