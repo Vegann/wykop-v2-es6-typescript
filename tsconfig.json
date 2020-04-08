@@ -1,9 +1,18 @@
 {
-  "files": [
-    "lib/index.ts"
+  "include": [
+    "lib"
   ],
+  "exclude": [
+    "node_modules",
+    "tests"
+  ],
+  "compileOnSave": true,
   "compilerOptions": {
+    "module": "commonjs",
+    "strict": true,
+    "declaration": true,
     "noImplicitAny": true,
-    "target": "es5"
+    "target": "es5",
+    "outDir": "./dist"
   }
 }

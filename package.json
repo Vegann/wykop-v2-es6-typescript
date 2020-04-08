@@ -1,17 +1,18 @@
 {
   "name": "wykop-v2-es6-typescript",
-  "version": "0.1",
+  "version": "0.0.1",
   "description": "Wykop API v2 wrapper",
   "main": "./dist/index.js",
   "private": true,
   "scripts": {
+    "build": "tsc",
     "test": "jest"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/Vegann/wykop-v2-es6-typescript.git"
   },
-  "author": "Vegann",
+  "author": "vegann",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/Vegann/wykop-v2-es6-typescript/issues"
@@ -38,12 +39,13 @@
     "@typescript-eslint/parser": "^2.27.0",
     "eslint": "^6.8.0",
     "eslint-config-airbnb-base": "^14.1.0",
+    "eslint-config-prettier": "^6.10.1",
     "eslint-plugin-import": "^2.20.2",
     "eslint-plugin-jest": "^23.8.2",
+    "eslint-plugin-prettier": "^3.1.2",
     "eslint-plugin-you-dont-need-lodash-underscore": "^6.10.0",
-    "gulp": "4.0.0",
-    "gulp-typescript": "^6.0.0-alpha.1",
     "jest": "^25.2.7",
+    "prettier": "^2.0.4",
     "ts-jest": "^25.3.1",
     "typescript": "^3.8.3"
   }
