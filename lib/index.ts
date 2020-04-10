@@ -1,4 +1,3 @@
-// import { strict as assert } from 'assert';
 import fetch, { Headers } from 'node-fetch';
 // eslint-disable-next-line no-unused-vars
 import { INamedParams, IData, IConfig } from './models';
@@ -38,9 +37,9 @@ export default class Wykop {
         .then((res) => res.json())
         .then((data: IData) => {
           if (data.error) {
-            reject(data.error);
+            return reject(data.error);
           }
-          resolve(data);
+          return resolve(data);
         })
         .catch((error: Error) => reject(error));
     });

@@ -10,15 +10,18 @@ describe('request', () => {
   it('shows error if appKey is not wrong', () => {
     const wykop = new Wykop({ appKey: '', appSecret: '' });
     wykop.request(['Entries', 'Hot'], { page: 1, period: 6 }).catch((err) => {
-      expect(err.message_en).toEqual('Invalid API key');
-      expect(err.code).toEqual(1);
+      expect(err.message_en).toBe('Invalid API key');
+      expect(err.code).toBe(1);
     });
   });
 
-  it('shows response if appKey is good', () => {
-    const wykop = new Wykop({ appKey: 'HinZMViHnH', appSecret: 'utoPM4th1c' });
-    wykop.request(['Entries', 'Hot'], { page: 1, period: 6 }).then((res) => {
-      expect(res.data.length).toBeGreaterThan(0);
-    });
+  it('shows response if appKey is providen and valid', () => {
+    const wykop = new Wykop({ appKey, appSecret });
+    wykop
+      .request(['Entries', 'Hot'], { page: 1, period: 6 })
+      .then((res) => {
+        expect(res.data.length).toBeGreaterThan(0);
+      })
+      .catch((err) => expect(err).toBeUndefined);
   });
 });
