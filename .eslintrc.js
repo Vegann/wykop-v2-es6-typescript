@@ -24,6 +24,7 @@ module.exports = {
     "you-dont-need-lodash-underscore"
   ],
   "rules": {
+    "max-len": ["error", { "code": 100 }],
     "import/extensions": [
       "error",
       "ignorePackages",
