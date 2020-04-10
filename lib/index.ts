@@ -1,35 +1,48 @@
 // import { strict as assert } from 'assert';
-// import { createHash } from 'crypto';
-import fetch from 'node-fetch';
-
+import fetch, { Headers } from 'node-fetch';
+// eslint-disable-next-line no-unused-vars
+import { INamedParams, IData, IConfig } from './models';
+import { md5 } from './utils';
 // // import omit from 'lodash/omit';
 
-// function md5(secret: string, url: string, sortedPost: string = ''): string {
-//   const string = `${secret}${url}${sortedPost}`;
-//   const buffer = Buffer.from(string, 'utf-8');
-//   return createHash('md5').update(buffer).digest('hex');
-// }
-
-type timePeriod = 6 | 12 | 24;
-interface InamedParams {
-  page: number;
-  period: timePeriod;
-}
-
 export default class Wykop {
-  private readonly wykopUrl: string = 'a2.wykop.pl/2';
+  private readonly config: IConfig;
 
-  private readonly ssl: boolean = true;
+  // eslint-disable-next-line no-unused-vars, no-useless-constructor, no-empty-function
+  constructor(config: Pick<IConfig, 'appKey' | 'appSecret'>) {
+    this.config = {
+      ssl: true,
+      wykopUrl: 'a2.wykop.pl',
+      ...config,
+    };
+  }
 
-  public request(apiParams: string[], namedParams: Partial<InamedParams>) {
-    const secured = this.ssl ? 'https' : 'http';
+  private static parseNamedParams(namedParams: Partial<INamedParams>): string {
+    let parsedNamedParams: string = '';
+    Object.entries(namedParams).forEach(([key, value]) => {
+      parsedNamedParams += `${key}/${value}/`;
+    });
+    return parsedNamedParams;
+  }
+
+  public request(apiParams: string[], namedParams: Partial<INamedParams>): Promise<any> {
+    const parsedNamedParams: string = Wykop.parseNamedParams(namedParams);
+    const { ssl, wykopUrl, appKey } = this.config;
+    const protocol = ssl ? 'https' : 'http';
     const joinedApiParams = apiParams.join('/');
-    const url = `${secured}://${this.wykopUrl}${joinedApiParams}/page/1/period/6`;
+    const url = `${protocol}://${wykopUrl}/${joinedApiParams}/${parsedNamedParams}appkey/${appKey}`;
+    const apisign = md5(this.config.appSecret, url);
+    const headers = new Headers({ apisign });
     return new Promise((resolve, reject) => {
-      fetch(url).then(
-        (res: any) => resolve(res),
-        (error: Error) => reject(error),
-      );
+      fetch(url, { headers })
+        .then((res) => res.json())
+        .then((data: IData) => {
+          if (data.error) {
+            reject(data.error);
+          }
+          resolve(data);
+        })
+        .catch((error: Error) => reject(error));
     });
   }
 }
