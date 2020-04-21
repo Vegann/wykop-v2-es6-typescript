@@ -6,7 +6,6 @@ module.exports = {
   },
   "extends": [
     "airbnb-base",
-    "plugin:you-dont-need-lodash-underscore/compatible",
     "plugin:prettier/recommended"
   ],
   "globals": {
@@ -21,17 +20,9 @@ module.exports = {
   "plugins": [
     "jest",
     "@typescript-eslint",
-    "you-dont-need-lodash-underscore"
   ],
   "rules": {
     "max-len": ["error", { "code": 100 }],
-    "import/extensions": [
-      "error",
-      "ignorePackages",
-      {
-        "ts": "never",
-      }
-    ]
   },
   "settings": {
     "import/resolver": {
