@@ -1,6 +1,30 @@
 import fetchMock from 'jest-fetch-mock';
 import Wykop from '../lib/index';
 
+describe('wykopConnectLink', () => {
+  describe('with redirect link', () => {
+    it('returns link for wykop connect', () => {
+      const wykop = new Wykop({ appKey: 'asdnasdnad', appSecret: 'sdakdsajd' });
+      const link = wykop.wykopConnectLink('http://localhost:3000');
+      expect(link).toEqual(
+        // eslint-disable-next-line max-len
+        'https://a2.wykop.pl/login/connect/appkey/asdnasdnad/redirect/aHR0cDovL2xvY2FsaG9zdDozMDAw/secure/0fd64c470ca4c85844f670113435ac08',
+      );
+    });
+  });
+
+  describe('without redirect link', () => {
+    it('returns link for wykop connect', () => {
+      const wykop = new Wykop({ appKey: 'asdnasdnad', appSecret: 'sdakdsajd' });
+      const link = wykop.wykopConnectLink();
+      expect(link).toEqual(
+        // eslint-disable-next-line max-len
+        'https://a2.wykop.pl/login/connect/appkey/asdnasdnad',
+      );
+    });
+  });
+});
+
 describe('request', () => {
   beforeEach(() => {
     fetchMock.resetMocks();
