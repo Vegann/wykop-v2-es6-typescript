@@ -30,6 +30,21 @@ export default class Wykop {
     return parsedNamedParams;
   }
 
+  public wykopConnectLink(redirect: string | undefined) {
+    const {
+      baseUrl,
+      config: { appKey, appSecret },
+    } = this;
+
+    let url: string = `${baseUrl}/login/connect/appkey/${appKey}`;
+    if (redirect) {
+      const encodedUri = encodeURI(redirect);
+      const secure = md5(appSecret + redirect);
+      url += `/redirect/${encodedUri}/secure/${secure}`;
+    }
+    return url;
+  }
+
   public request(apiParams: string[], namedParams: INamedParams): Promise<any> {
     const {
       baseUrl,
