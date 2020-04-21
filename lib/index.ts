@@ -30,7 +30,7 @@ export default class Wykop {
     return parsedNamedParams;
   }
 
-  public wykopConnectLink(redirect: string | undefined) {
+  public wykopConnectLink(redirect?: string) {
     const {
       baseUrl,
       config: { appKey, appSecret },
@@ -38,7 +38,8 @@ export default class Wykop {
 
     let url: string = `${baseUrl}/login/connect/appkey/${appKey}`;
     if (redirect) {
-      const encodedUri = encodeURI(redirect);
+      const redirectBuffer = Buffer.from(redirect, 'utf-8');
+      const encodedUri = encodeURI(redirectBuffer.toString('base64'));
       const secure = md5(appSecret + redirect);
       url += `/redirect/${encodedUri}/secure/${secure}`;
     }

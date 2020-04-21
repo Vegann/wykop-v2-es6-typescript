@@ -23,6 +23,7 @@ module.exports = {
   ],
   "rules": {
     "max-len": ["error", { "code": 100 }],
+    "import/extensions": ["error", { "ts": "never" }]
   },
   "settings": {
     "import/resolver": {
