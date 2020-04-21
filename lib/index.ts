@@ -1,11 +1,15 @@
 import fetch, { Headers } from 'node-fetch';
+import { md5 } from './utils';
 // eslint-disable-next-line no-unused-vars
 import { INamedParams, IData, IConfig } from './models';
-import { md5 } from './utils';
 // // import omit from 'lodash/omit';
 
 export default class Wykop {
   private readonly config: IConfig;
+
+  private readonly protocol: string;
+
+  private readonly baseUrl: string;
 
   // eslint-disable-next-line no-unused-vars, no-useless-constructor, no-empty-function
   constructor(config: Pick<IConfig, 'appKey' | 'appSecret'>) {
@@ -14,9 +18,11 @@ export default class Wykop {
       wykopUrl: 'a2.wykop.pl',
       ...config,
     };
+    this.protocol = this.config.ssl ? 'https' : 'http';
+    this.baseUrl = `${this.protocol}://${this.config.wykopUrl}`;
   }
 
-  private static parseNamedParams(namedParams: Partial<INamedParams>): string {
+  private static parseNamedParams(namedParams: INamedParams): string {
     let parsedNamedParams: string = '';
     Object.entries(namedParams).forEach(([key, value]) => {
       parsedNamedParams += `${key}/${value}/`;
@@ -24,21 +30,26 @@ export default class Wykop {
     return parsedNamedParams;
   }
 
-  public request(apiParams: string[], namedParams: Partial<INamedParams>): Promise<any> {
+  public request(apiParams: string[], namedParams: INamedParams): Promise<any> {
+    const {
+      baseUrl,
+      config: { appKey },
+    } = this;
+
     const parsedNamedParams: string = Wykop.parseNamedParams(namedParams);
-    const { ssl, wykopUrl, appKey } = this.config;
-    const protocol = ssl ? 'https' : 'http';
     const joinedApiParams = apiParams.join('/');
-    const url = `${protocol}://${wykopUrl}/${joinedApiParams}/${parsedNamedParams}appkey/${appKey}`;
-    const apisign = md5(this.config.appSecret, url);
-    const headers = new Headers({ apisign });
+    const url = `${baseUrl}/${joinedApiParams}/${parsedNamedParams}appkey/${appKey}/`;
+    const headers = new Headers({
+      apisign: md5(this.config.appSecret + url),
+      'User-Agent': 'wykop-v2-typescript',
+      'Content-Type': 'application/x-www-form-urlencoded',
+    });
+
     return new Promise((resolve, reject) => {
-      fetch(url, { headers })
+      fetch(url, { method: 'GET', headers })
         .then((res) => res.json())
         .then((data: IData) => {
-          if (data.error) {
-            return reject(data.error);
-          }
+          if (data.error) return reject(data.error);
           return resolve(data);
         })
         .catch((error: Error) => reject(error));

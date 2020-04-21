@@ -1,7 +1,5 @@
-type timePeriod = 6 | 12 | 24;
 export interface INamedParams {
-  page: number;
-  period: timePeriod;
+  [key: string]: any;
 }
 
 /* eslint-disable camelcase */
