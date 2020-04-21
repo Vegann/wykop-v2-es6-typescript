@@ -6,7 +6,6 @@ module.exports = {
   },
   "extends": [
     "airbnb-base",
-    "plugin:you-dont-need-lodash-underscore/compatible",
     "plugin:prettier/recommended"
   ],
   "globals": {
