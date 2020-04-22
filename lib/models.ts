@@ -1,6 +1,9 @@
 export interface INamedParams {
   [key: string]: any;
 }
+export interface IPostParams {
+  [key: string]: any;
+}
 
 /* eslint-disable camelcase */
 export interface IError {

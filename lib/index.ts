@@ -1,7 +1,8 @@
 import fetch, { Headers } from 'node-fetch';
+import { stringify } from 'querystring';
 import { md5 } from './utils';
 // eslint-disable-next-line no-unused-vars
-import { INamedParams, IData, IConfig } from './models';
+import { INamedParams, IData, IConfig, IPostParams } from './models';
 // // import omit from 'lodash/omit';
 
 export default class Wykop {
@@ -30,7 +31,7 @@ export default class Wykop {
     return parsedNamedParams;
   }
 
-  public wykopConnectLink(redirect?: string) {
+  public wykopConnectLink(redirect?: string): string {
     const {
       baseUrl,
       config: { appKey, appSecret },
@@ -46,23 +47,38 @@ export default class Wykop {
     return url;
   }
 
-  public request(apiParams: string[], namedParams: INamedParams): Promise<any> {
+  public request(
+    apiParams: string[],
+    namedParams?: INamedParams | undefined,
+    postParams?: IPostParams | undefined,
+  ): Promise<any> {
     const {
       baseUrl,
-      config: { appKey },
+      config: { appKey, appSecret },
     } = this;
 
-    const parsedNamedParams: string = Wykop.parseNamedParams(namedParams);
+    let parsedNamedParams: string = '';
+    if (namedParams) {
+      parsedNamedParams = Wykop.parseNamedParams(namedParams);
+    }
+
     const joinedApiParams = apiParams.join('/');
     const url = `${baseUrl}/${joinedApiParams}/${parsedNamedParams}appkey/${appKey}/`;
+    let method: string = 'GET';
+    let body: string | undefined;
     const headers = new Headers({
-      apisign: md5(this.config.appSecret + url),
+      apisign: md5(appSecret + url, postParams),
       'User-Agent': 'wykop-v2-typescript',
-      'Content-Type': 'application/x-www-form-urlencoded',
     });
 
+    if (postParams) {
+      method = 'POST';
+      body = stringify(postParams);
+      headers.set('Content-Type', 'application/x-www-form-urlencoded');
+    }
+
     return new Promise((resolve, reject) => {
-      fetch(url, { method: 'GET', headers })
+      fetch(url, { method, headers, body })
         .then((res) => res.json())
         .then((data: IData) => {
           if (data.error) return reject(data.error);
