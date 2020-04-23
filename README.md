@@ -21,7 +21,6 @@ https://www.wykop.pl/dla-programistow/apiv2/
 ```javascript
 import wykop from "wykop-v2-typescript"
 
-
 const wykop = new Wykop({
   appKey: string,
   appSecret: string,
@@ -43,14 +42,18 @@ const wykop = new Wykop({
 
 ## Request parameters
 
-```javascript
-wykop.request(
-  // array with strings, will be parsed as string/string/
+```typescript
+wykop.request({
+  apiParams: string[] // array with strings, will be parsed as string/string/
   ,
-  // object with API parameters, will be parsed as key/value/key/value
+  namedParams: {
+    [key: string]: string | number
+  } // object with API parameters, will be parsed as key/value/key/value
   ,
-  // object will be parsed as POST parameters key=value&key=value
-)
+  postParams: {
+    [key: string]: string | number
+  } // object will be send in body as key=value&key=value
+})
 ```
 
 ## Example request (without logging user)
@@ -97,30 +100,35 @@ const wykop = new Wykop({
    appKey: 'asdnasdnad', appSecret: 'sdakdsajd'
 });
 
-const link = wykop.wykopConnectLink();
+const {link} = wykop.wykopConnectLink();
+
+
 
 ```
-Put this link in `a` tag
+Put link in `a` tag
+
 
 - With redirect
 
 ```javascript
 const wykop = new Wykop({
-   appKey: 'asdnasdnad', appSecret: 'sdakdsajd'
+   appKey: 'asdnasdnad',
+   appSecret: 'sdakdsajd'
 });
 
-const link = wykop.wykopConnectLink('http://localhost:8080');
+const {link, secure} = wykop.wykopConnectLink('http://localhost:8080');
 ```
 
-When user logs in Wykop will redirect they to `http://localhost:8080/?connectData=XXXXXXXXXX`
+1. When user logs in Wykop will redirect they to `http://localhost:8080/?connectData=XXXXXXXXXX`
 
-Then you can catch `XXXXXXXXXX` from url and decode user with:
+2. Then you can catch `XXXXXXXXXX` from url and decode user with:
 
 ```javascript
 JSON.parse(atob('XXXXXXXXXX'))
 ```
+3. Use secure for checking if correct user was returned
 
-TODO:
+### TODO:
 
 - [ ] complete README with real-life examples
 - [ ] add parsing postParams when the user tries to add a new entry
