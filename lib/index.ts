@@ -1,7 +1,8 @@
 import fetch, { Headers } from 'node-fetch';
+import { stringify } from 'querystring';
 import { md5 } from './utils';
 // eslint-disable-next-line no-unused-vars
-import { INamedParams, IData, IConfig } from './models';
+import { INamedParams, IData, IConfig, IPostParams, IWykopConnect, IRequestParams } from './models';
 // // import omit from 'lodash/omit';
 
 export default class Wykop {
@@ -10,6 +11,8 @@ export default class Wykop {
   private readonly protocol: string;
 
   private readonly baseUrl: string;
+
+  private readonly appKeyUrl: string;
 
   // eslint-disable-next-line no-unused-vars, no-useless-constructor, no-empty-function
   constructor(config: Pick<IConfig, 'appKey' | 'appSecret'>) {
@@ -20,49 +23,64 @@ export default class Wykop {
     };
     this.protocol = this.config.ssl ? 'https' : 'http';
     this.baseUrl = `${this.protocol}://${this.config.wykopUrl}`;
+    this.appKeyUrl = `appkey/${config.appKey}/`;
+  }
+
+  private generateHeaders(url: string, postParams?: IPostParams): Headers {
+    return new Headers({
+      apisign: md5(this.config.appSecret + url, postParams),
+      'User-Agent': 'wykop-v2-typescript',
+    });
   }
 
   private static parseNamedParams(namedParams: INamedParams): string {
-    let parsedNamedParams: string = '';
-    Object.entries(namedParams).forEach(([key, value]) => {
-      parsedNamedParams += `${key}/${value}/`;
-    });
-    return parsedNamedParams;
+    const parsedNamedParams: string = Object.keys(namedParams)
+      .map((key) => `${key}/${namedParams[key]}`)
+      .join('/');
+    return `${parsedNamedParams}/`;
   }
 
-  public wykopConnectLink(redirect?: string) {
+  public wykopConnectLink(redirect?: string): IWykopConnect {
     const {
       baseUrl,
-      config: { appKey, appSecret },
+      appKeyUrl,
+      config: { appSecret },
     } = this;
 
-    let url: string = `${baseUrl}/login/connect/appkey/${appKey}`;
+    let url: string = `${baseUrl}/login/connect/${appKeyUrl}`;
+    let secure: undefined | string;
     if (redirect) {
       const redirectBuffer = Buffer.from(redirect, 'utf-8');
       const encodedUri = encodeURI(redirectBuffer.toString('base64'));
-      const secure = md5(appSecret + redirect);
-      url += `/redirect/${encodedUri}/secure/${secure}`;
+      secure = md5(appSecret + redirect);
+      url += `redirect/${encodedUri}/secure/${secure}/`;
     }
-    return url;
+    return { url, secure };
   }
 
-  public request(apiParams: string[], namedParams: INamedParams): Promise<any> {
-    const {
-      baseUrl,
-      config: { appKey },
-    } = this;
+  public request({ apiParams, namedParams, postParams }: IRequestParams): Promise<any> {
+    const { baseUrl, appKeyUrl } = this;
 
-    const parsedNamedParams: string = Wykop.parseNamedParams(namedParams);
-    const joinedApiParams = apiParams.join('/');
-    const url = `${baseUrl}/${joinedApiParams}/${parsedNamedParams}appkey/${appKey}/`;
-    const headers = new Headers({
-      apisign: md5(this.config.appSecret + url),
-      'User-Agent': 'wykop-v2-typescript',
-      'Content-Type': 'application/x-www-form-urlencoded',
-    });
+    let parsedNamedParams: string = '';
+    if (namedParams) {
+      parsedNamedParams = Wykop.parseNamedParams(namedParams);
+    }
+
+    const joinedApiParams = `${apiParams.join('/')}/`;
+    const url = `${baseUrl}/${joinedApiParams}${parsedNamedParams}${appKeyUrl}`;
+
+    let method: string = 'GET';
+    let body: string | undefined;
+    const headers = this.generateHeaders(url, postParams);
+
+    if (postParams) {
+      method = 'POST';
+      body = stringify(postParams);
+      headers.set('Content-Type', 'application/x-www-form-urlencoded');
+    }
 
     return new Promise((resolve, reject) => {
-      fetch(url, { method: 'GET', headers })
+      fetch(url, { method, headers, body })
         .then((res) => res.json())
         .then((data: IData) => {
           if (data.error) return reject(data.error);

@@ -1,6 +1,14 @@
 export interface INamedParams {
   [key: string]: any;
 }
+export interface IPostParams {
+  [key: string]: any;
+}
+
+export interface IWykopConnect {
+  url: string;
+  secure: string | undefined;
+}
 
 /* eslint-disable camelcase */
 export interface IError {
@@ -21,4 +29,10 @@ export interface IConfig {
   appSecret: string;
   wykopUrl: string;
   ssl: boolean;
+}
+
+export interface IRequestParams {
+  apiParams: string[];
+  namedParams?: INamedParams | undefined;
+  postParams?: IPostParams | undefined;
 }

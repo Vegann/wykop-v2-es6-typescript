@@ -1,7 +1,13 @@
 import { createHash } from 'crypto';
+import { IPostParams } from './models';
 
 // eslint-disable-next-line import/prefer-default-export
-export function md5(string: string): string {
-  const buffer = Buffer.from(string, 'utf-8');
-  return createHash('md5').update(buffer).digest('hex');
+export function md5(string: string, postParams?: IPostParams): string {
+  let data = string;
+  if (postParams) {
+    data += Object.keys(postParams)
+      .map((key) => postParams[key])
+      .join(',');
+  }
+  return createHash('md5').update(data).digest('hex');
 }
