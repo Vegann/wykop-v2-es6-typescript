@@ -126,6 +126,13 @@ describe('request', () => {
         'https://a2.wykop.pl/Login/Index/appkey/aaa/',
         expect.any(Object),
       );
+
+      // eslint-disable-next-line no-undef
+      if (fetchMock.mock.calls[0][1]?.headers instanceof Headers) {
+        expect(fetchMock.mock.calls[0][1]?.headers.get('Content-Type')).toEqual(
+          'application/x-www-form-urlencoded',
+        );
+      }
     });
     test('with embed', () => {
       const wykop = new Wykop({ appKey: 'aaa', appSecret: 'aaa' });

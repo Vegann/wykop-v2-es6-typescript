@@ -28,10 +28,16 @@ export default class Wykop {
   }
 
   private generateHeaders(url: string, postParams?: IPostParams): Headers {
-    return new Headers({
+    const headers = new Headers({
       apisign: md5(this.config.appSecret + url, postParams),
       'User-Agent': 'wykop-v2-typescript',
     });
+
+    if (postParams && typeof postParams.embed !== 'object') {
+      headers.set('Content-Type', 'application/x-www-form-urlencoded');
+    }
+
+    return headers;
   }
 
   private static parseNamedParams(namedParams: INamedParams): string {
@@ -39,6 +45,15 @@ export default class Wykop {
       .map((key) => `${key}/${namedParams[key]}`)
       .join('/');
     return `${parsedNamedParams}/`;
+  }
+
+  private static bodyFromPostParams(postParams?: IPostParams): undefined | string | FormData {
+    if (!postParams) return undefined;
+
+    if (!postParams.embed || typeof postParams.embed === 'string') {
+      return stringify(postParams);
+    }
+    return convertToFormData(postParams);
   }
 
   public wykopConnectLink(redirect?: string): IWykopConnect {
@@ -69,20 +84,15 @@ export default class Wykop {
 
     const joinedApiParams = `${apiParams.join('/')}/`;
     const url = `${baseUrl}/${joinedApiParams}${parsedNamedParams}${appKeyUrl}`;
-
-    let method: string = 'GET';
-    let body: string | undefined | FormData;
     const headers = this.generateHeaders(url, postParams);
 
-    if (postParams) {
+    let method: string = 'GET';
+    const body = Wykop.bodyFromPostParams(postParams);
+
+    if (body) {
       method = 'POST';
-      if (!postParams.embed || typeof postParams.embed === 'string') {
-        body = stringify(postParams);
-        headers.set('Content-Type', 'application/x-www-form-urlencoded');
-      } else {
-        body = convertToFormData(postParams);
-      }
     }
+
     return new Promise((resolve, reject) => {
       fetch(url, { method, headers, body })
         .then((res) => res.json())
