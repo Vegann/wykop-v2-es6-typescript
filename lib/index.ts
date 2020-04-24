@@ -1,9 +1,10 @@
 import fetch, { Headers } from 'node-fetch';
+// eslint-disable-next-line no-unused-vars
+import * as FormData from 'form-data';
 import { stringify } from 'querystring';
-import { md5 } from './utils';
+import { md5, convertToFormData } from './utils';
 // eslint-disable-next-line no-unused-vars
 import { INamedParams, IData, IConfig, IPostParams, IWykopConnect, IRequestParams } from './models';
-// // import omit from 'lodash/omit';
 
 export default class Wykop {
   private readonly config: IConfig;
@@ -27,10 +28,16 @@ export default class Wykop {
   }
 
   private generateHeaders(url: string, postParams?: IPostParams): Headers {
-    return new Headers({
+    const headers = new Headers({
       apisign: md5(this.config.appSecret + url, postParams),
       'User-Agent': 'wykop-v2-typescript',
     });
+
+    if (postParams && typeof postParams.embed !== 'object') {
+      headers.set('Content-Type', 'application/x-www-form-urlencoded');
+    }
+
+    return headers;
   }
 
   private static parseNamedParams(namedParams: INamedParams): string {
@@ -38,6 +45,15 @@ export default class Wykop {
       .map((key) => `${key}/${namedParams[key]}`)
       .join('/');
     return `${parsedNamedParams}/`;
+  }
+
+  private static bodyFromPostParams(postParams?: IPostParams): undefined | string | FormData {
+    if (!postParams) return undefined;
+
+    if (!postParams.embed || typeof postParams.embed === 'string') {
+      return stringify(postParams);
+    }
+    return convertToFormData(postParams);
   }
 
   public wykopConnectLink(redirect?: string): IWykopConnect {
@@ -68,15 +84,13 @@ export default class Wykop {
 
     const joinedApiParams = `${apiParams.join('/')}/`;
     const url = `${baseUrl}/${joinedApiParams}${parsedNamedParams}${appKeyUrl}`;
-
-    let method: string = 'GET';
-    let body: string | undefined;
     const headers = this.generateHeaders(url, postParams);
 
-    if (postParams) {
+    let method: string = 'GET';
+    const body = Wykop.bodyFromPostParams(postParams);
+
+    if (body) {
       method = 'POST';
-      body = stringify(postParams);
-      headers.set('Content-Type', 'application/x-www-form-urlencoded');
     }
 
     return new Promise((resolve, reject) => {
