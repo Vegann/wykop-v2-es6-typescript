@@ -1,9 +1,9 @@
 export interface INamedParams {
   [key: string]: any;
 }
-export interface IPostParams {
+export type IPostParams = {
   [key: string]: any;
-}
+};
 
 export interface IWykopConnect {
   url: string;
@@ -33,6 +33,6 @@ export interface IConfig {
 
 export interface IRequestParams {
   apiParams: string[];
-  namedParams?: INamedParams | undefined;
-  postParams?: IPostParams | undefined;
+  namedParams?: INamedParams;
+  postParams?: IPostParams;
 }

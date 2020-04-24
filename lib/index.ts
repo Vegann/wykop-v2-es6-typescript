@@ -1,9 +1,10 @@
 import fetch, { Headers } from 'node-fetch';
+// eslint-disable-next-line no-unused-vars
+import * as FormData from 'form-data';
 import { stringify } from 'querystring';
-import { md5 } from './utils';
+import { md5, convertToFormData } from './utils';
 // eslint-disable-next-line no-unused-vars
 import { INamedParams, IData, IConfig, IPostParams, IWykopConnect, IRequestParams } from './models';
-// // import omit from 'lodash/omit';
 
 export default class Wykop {
   private readonly config: IConfig;
@@ -70,15 +71,18 @@ export default class Wykop {
     const url = `${baseUrl}/${joinedApiParams}${parsedNamedParams}${appKeyUrl}`;
 
     let method: string = 'GET';
-    let body: string | undefined;
+    let body: string | undefined | FormData;
     const headers = this.generateHeaders(url, postParams);
 
     if (postParams) {
       method = 'POST';
-      body = stringify(postParams);
-      headers.set('Content-Type', 'application/x-www-form-urlencoded');
+      if (!postParams.embed || typeof postParams.embed === 'string') {
+        body = stringify(postParams);
+        headers.set('Content-Type', 'application/x-www-form-urlencoded');
+      } else {
+        body = convertToFormData(postParams);
+      }
     }
-
     return new Promise((resolve, reject) => {
       fetch(url, { method, headers, body })
         .then((res) => res.json())
