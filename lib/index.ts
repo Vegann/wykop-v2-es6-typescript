@@ -15,8 +15,12 @@ export default class Wykop {
 
   private readonly appKeyUrl: string;
 
+  private userkeyUrl: string = '';
+
+  userkey?: string;
+
   // eslint-disable-next-line no-unused-vars, no-useless-constructor, no-empty-function
-  constructor(config: Pick<IConfig, 'appKey' | 'appSecret'>) {
+  constructor(config: Pick<IConfig, 'appKey' | 'appSecret'>, userkey?: string) {
     this.config = {
       ssl: true,
       wykopUrl: 'a2.wykop.pl',
@@ -25,6 +29,14 @@ export default class Wykop {
     this.protocol = this.config.ssl ? 'https' : 'http';
     this.baseUrl = `${this.protocol}://${this.config.wykopUrl}`;
     this.appKeyUrl = `appkey/${config.appKey}/`;
+    if (userkey) {
+      this.userkey = userkey;
+      this.generateUserkeyUrl();
+    }
+  }
+
+  private generateUserkeyUrl() {
+    this.userkeyUrl = `userkey/${this.userkey}/`;
   }
 
   private generateHeaders(url: string, postParams?: IPostParams): Headers {
@@ -75,7 +87,7 @@ export default class Wykop {
   }
 
   public request({ methods, namedParams, apiParams, postParams }: IRequestParams): Promise<any> {
-    const { baseUrl, appKeyUrl } = this;
+    const { baseUrl, appKeyUrl, userkeyUrl } = this;
 
     let parsedNamedParams: string = '';
     if (namedParams) parsedNamedParams = Wykop.parseNamedParams(namedParams);
@@ -84,7 +96,7 @@ export default class Wykop {
     if (apiParams) joinedApiParams = `${apiParams.join('/')}/`;
 
     const joinedMethods = `${methods.join('/')}/`;
-    const url = `${baseUrl}/${joinedMethods}${parsedNamedParams}${joinedApiParams}${appKeyUrl}`;
+    const url = `${baseUrl}/${joinedMethods}${parsedNamedParams}${joinedApiParams}${appKeyUrl}${userkeyUrl}`;
     const headers = this.generateHeaders(url, postParams);
 
     let method: string = 'GET';
@@ -97,9 +109,14 @@ export default class Wykop {
     return new Promise((resolve, reject) => {
       fetch(url, { method, headers, body })
         .then((res) => res.json())
-        .then((data: IData) => {
-          if (data.error) return reject(data.error);
-          return resolve(data);
+        .then((res: IData) => {
+          if (res.data?.userkey) {
+            this.userkey = res.data.userkey;
+            this.generateUserkeyUrl();
+          }
+
+          if (res.error) return reject(res.error);
+          return resolve(res);
         })
         .catch((error: Error) => reject(error));
     });
