@@ -57,6 +57,83 @@ describe('request', () => {
     );
   });
 
+  describe('userkey', () => {
+    it('correctly sets userkey if user provide it', () => {
+      const wykop = new Wykop(
+        {
+          appKey: 'asdnasdnad',
+          appSecret: 'sdakdsajd',
+        },
+        'userkey',
+      );
+
+      fetchMock.mockResponseOnce(
+        JSON.stringify({
+          data: [1, 2, 3],
+        }),
+      );
+
+      wykop
+        .request({
+          methods: ['Entries', 'Hot'],
+          namedParams: { page: 1, period: 6 },
+        })
+        .then((res) => {
+          expect(res.data.length).toEqual(3);
+        });
+
+      expect(fetchMock).toBeCalled();
+      expect(fetchMock).toBeCalledWith(
+        'https://a2.wykop.pl/Entries/Hot/page/1/period/6/appkey/asdnasdnad/userkey/userkey/',
+        expect.any(Object),
+      );
+    });
+
+    describe('correctly sets userkey if user request login', () => {
+      const wykop = new Wykop({ appKey: 'asdnasdnad', appSecret: 'sdakdsajd' });
+
+      fetchMock.mockResponseOnce(
+        JSON.stringify({
+          data: { userkey: 'userkey' },
+        }),
+      );
+
+      wykop
+        .request({
+          methods: ['Entries', 'Hot'],
+          namedParams: { page: 1, period: 6 },
+        })
+        .then((res) => {
+          expect(res.data.userkey).toEqual('userkey');
+          expect(wykop.userkey).toEqual('userkey');
+        });
+
+      it('uses it after', () => {
+        fetchMock.mockResponseOnce(
+          JSON.stringify({
+            data: [1, 2, 3],
+          }),
+        );
+
+        wykop
+          .request({
+            methods: ['Entries', 'Hot'],
+            namedParams: { page: 1, period: 6 },
+          })
+          .then((res) => {
+            expect(res.data.length).toEqual(3);
+            expect(wykop.userkey).toEqual('userkey');
+          });
+
+        expect(fetchMock).toBeCalled();
+        expect(fetchMock).toBeCalledWith(
+          'https://a2.wykop.pl/Entries/Hot/page/1/period/6/appkey/asdnasdnad/userkey/userkey/',
+          expect.any(Object),
+        );
+      });
+    });
+  });
+
   it('returns response if appKey is providen and valid', () => {
     const wykop = new Wykop({ appKey: 'asdnasdnad', appSecret: 'sdakdsajd' });
 

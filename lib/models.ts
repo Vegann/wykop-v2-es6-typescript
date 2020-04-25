@@ -1,9 +1,9 @@
 export interface INamedParams {
   [key: string]: any;
 }
-export type IPostParams = {
+export interface IPostParams {
   [key: string]: any;
-};
+}
 
 export interface IWykopConnect {
   url: string;
