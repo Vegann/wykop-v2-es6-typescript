@@ -7,9 +7,6 @@
   "files": [
     "lib /**/*"
   ],
-  "publishConfig": {
-    "registry": "https://npm.pkg.github.com/"
-  },
   "prepare": "yarn build",
   "prepublishOnly": "yarn test && yarn lint",
   "preversion": "yarn lint",
