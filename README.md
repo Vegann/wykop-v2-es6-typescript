@@ -26,7 +26,9 @@ const wykop = new Wykop({
   appSecret: string,
   secure: boolean, // if set to true url will be prefixed with 'https', otherwise 'http'
   wykopUrl: string // base url for wykop (without trailing slash)
-})
+  }
+  userkey: string // userkey uses for requests
+)
 ```
 
 ## Default options
@@ -38,6 +40,7 @@ const wykop = new Wykop({
   secure: true,
   wykopUrl: a2.wykop.pl
 }
+userkey: undefined
 ```
 
 ## Request parameters
@@ -80,17 +83,69 @@ wykop.request({
 - With async/await
 
 ```javascript
+// Dont forget to put this code in async function
 const wykop = new Wykop({
    appKey: 'asdnasdnad',
    appSecret: 'sdakdsajd'
 });
 
 try {
-  const response = wykop.request({
+  const response = await wykop.request({
     methods: ['Entries', 'Hot'],
     namedParams: { page: 1, period: 6 }
   })
   // Your code here
+} catch(err) {
+  // Only if something went wrong 😁
+}
+```
+
+## Example request (with userkey)
+
+- Without async/await
+```javascript
+const wykop = new Wykop({
+   appKey: 'asdnasdnad',
+   appSecret: 'sdakdsajd'
+});
+
+wykop.request({
+  methods: ["Login","Index"],
+  postParams: { login: "Vegann", accountkey: "Token from wykop connect" }
+}).then(() => {
+  // userkey will be stored in wykop.userkey you dont need to provide it once logged in
+  return wykop.request({
+    methods: ['Entries', 'Add'],
+    postParams: { body: "Body" }
+  })
+}).then((res) => {
+  // Response from wykop
+}).catch((error) => {
+  // Only if something went wrong 😁
+});
+```
+- With async/await
+```javascript
+// Dont forget to put this code in async function
+const wykop = new Wykop({
+   appKey: 'asdnasdnad',
+   appSecret: 'sdakdsajd'
+});
+
+try {
+  await wykop.request({
+    methods: ["Login","Index"],
+    postParams: {
+      login: "Vegann",
+      accountkey: "Token from wykop connect"
+    }
+  })
+  // userkey will be stored in wykop.userkey you dont need to provide it once logged in
+  const res = await wykop.request({
+    methods: ['Entries', 'Add'],
+    postParams: { body: "Body" }
+  })
+  // Response from wykop
 } catch(err) {
   // Only if something went wrong 😁
 }
@@ -131,8 +186,3 @@ const { url, secure } = wykop.wykopConnectLink('http://localhost:8080');
 JSON.parse(atob('XXXXXXXXXX'))
 ```
 3. Use `secure` for checking if correct user was returned
-
-### TODO:
-
-- [ ] complete README with real-life examples
-- [ ] add parsing postParams when the user tries to add a new entry
