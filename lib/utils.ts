@@ -8,7 +8,7 @@ export function md5(string: string, postParams?: IPostParams): string {
   let data = string;
   if (postParams) {
     const clonedPostParams = { ...postParams };
-    if (postParams.embed && typeof postParams !== 'string') {
+    if (postParams.embed && typeof postParams.embed !== 'string') {
       delete clonedPostParams.embed;
     }
 
