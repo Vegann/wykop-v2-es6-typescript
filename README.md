@@ -18,7 +18,7 @@ https://www.wykop.pl/dla-programistow/apiv2/
 
 ## Initialization
 
-```javascript
+```typescript
 import wykop from "wykop-v2-typescript"
 
 const wykop = new Wykop({
@@ -44,11 +44,13 @@ const wykop = new Wykop({
 
 ```typescript
 wykop.request({
-  apiParams: string[] // array with strings, will be parsed as string/string/
+  methods: string[] // array with strings, will be parsed as string/string/
   ,
   namedParams: {
     [key: string]: string | number
   } // object with API parameters, will be parsed as key/value/key/value
+  ,
+  apiParams: string[] // array with strings, will be parsed as string/string/
   ,
   postParams: {
     [key: string]: string | number
@@ -61,13 +63,14 @@ wykop.request({
 - Without async/await
 ```javascript
 const wykop = new Wykop({
-   appKey: 'asdnasdnad', appSecret: 'sdakdsajd'
+   appKey: 'asdnasdnad',
+   appSecret: 'sdakdsajd'
 });
 
-wykop.request(
-  ['Entries', 'Hot'],
-  { page: 1, period: 6 }
-).then((res) => {
+wykop.request({
+  methods: ['Entries', 'Hot'],
+  namedParams: { page: 1, period: 6 }
+}).then((res) => {
   // Response from wykop
 }).catch((error) => {
   // Only if something went wrong 😁
@@ -78,13 +81,15 @@ wykop.request(
 
 ```javascript
 const wykop = new Wykop({
-   appKey: 'asdnasdnad', appSecret: 'sdakdsajd'
+   appKey: 'asdnasdnad',
+   appSecret: 'sdakdsajd'
 });
+
 try {
-  const response = wykop.request(
-  ['Entries', 'Hot'],
-  { page: 1, period: 6 }
-)
+  const response = wykop.request({
+    methods: ['Entries', 'Hot'],
+    namedParams: { page: 1, period: 6 }
+  })
   // Your code here
 } catch(err) {
   // Only if something went wrong 😁
@@ -97,15 +102,14 @@ try {
 
 ```javascript
 const wykop = new Wykop({
-   appKey: 'asdnasdnad', appSecret: 'sdakdsajd'
+   appKey: 'asdnasdnad',
+   appSecret: 'sdakdsajd'
 });
 
-const {link} = wykop.wykopConnectLink();
-
-
-
+const { url } = wykop.wykopConnectLink();
 ```
-Put link in `a` tag
+
+Put `url` in `a` tag
 
 
 - With redirect
@@ -116,17 +120,17 @@ const wykop = new Wykop({
    appSecret: 'sdakdsajd'
 });
 
-const {link, secure} = wykop.wykopConnectLink('http://localhost:8080');
+const { url, secure } = wykop.wykopConnectLink('http://localhost:8080');
 ```
 
-1. When user logs in Wykop will redirect they to `http://localhost:8080/?connectData=XXXXXXXXXX`
+1. After user logs in to Wykop will redirect be to `http://localhost:8080/?connectData=XXXXXXXXXX`
 
 2. Then you can catch `XXXXXXXXXX` from url and decode user with:
 
 ```javascript
 JSON.parse(atob('XXXXXXXXXX'))
 ```
-3. Use secure for checking if correct user was returned
+3. Use `secure` for checking if correct user was returned
 
 ### TODO:
 
