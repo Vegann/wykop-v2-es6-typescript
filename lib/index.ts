@@ -74,16 +74,17 @@ export default class Wykop {
     return { url, secure };
   }
 
-  public request({ apiParams, namedParams, postParams }: IRequestParams): Promise<any> {
+  public request({ methods, namedParams, apiParams, postParams }: IRequestParams): Promise<any> {
     const { baseUrl, appKeyUrl } = this;
 
     let parsedNamedParams: string = '';
-    if (namedParams) {
-      parsedNamedParams = Wykop.parseNamedParams(namedParams);
-    }
+    if (namedParams) parsedNamedParams = Wykop.parseNamedParams(namedParams);
 
-    const joinedApiParams = `${apiParams.join('/')}/`;
-    const url = `${baseUrl}/${joinedApiParams}${parsedNamedParams}${appKeyUrl}`;
+    let joinedApiParams: string = '';
+    if (apiParams) joinedApiParams = `${apiParams.join('/')}/`;
+
+    const joinedMethods = `${methods.join('/')}/`;
+    const url = `${baseUrl}/${joinedMethods}${parsedNamedParams}${joinedApiParams}${appKeyUrl}`;
     const headers = this.generateHeaders(url, postParams);
 
     let method: string = 'GET';

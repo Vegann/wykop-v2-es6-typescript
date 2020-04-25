@@ -32,7 +32,8 @@ export interface IConfig {
 }
 
 export interface IRequestParams {
-  apiParams: string[];
+  methods: string[];
   namedParams?: INamedParams;
+  apiParams?: string[];
   postParams?: IPostParams;
 }

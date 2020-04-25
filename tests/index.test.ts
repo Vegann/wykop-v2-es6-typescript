@@ -42,7 +42,7 @@ describe('request', () => {
 
     wykop
       .request({
-        apiParams: ['Entries', 'Hot'],
+        methods: ['Entries', 'Hot'],
         namedParams: { page: 1, period: 6 },
       })
       .catch((err) => {
@@ -68,8 +68,9 @@ describe('request', () => {
 
     wykop
       .request({
-        apiParams: ['Entries', 'Hot'],
+        methods: ['Entries', 'Hot'],
         namedParams: { page: 1, period: 6 },
+        apiParams: ['tag'],
       })
       .then((res) => {
         expect(res.data.length).toBeGreaterThan(0);
@@ -77,7 +78,7 @@ describe('request', () => {
 
     expect(fetchMock).toBeCalled();
     expect(fetchMock).toBeCalledWith(
-      'https://a2.wykop.pl/Entries/Hot/page/1/period/6/appkey/asdnasdnad/',
+      'https://a2.wykop.pl/Entries/Hot/page/1/period/6/tag/appkey/asdnasdnad/',
       expect.any(Object),
     );
   });
@@ -91,7 +92,7 @@ describe('request', () => {
 
     wykop
       .request({
-        apiParams: ['Entries', 'Hot'],
+        methods: ['Entries', 'Hot'],
         namedParams: { page: 1, period: 6 },
       })
       .catch((err) => {
@@ -116,7 +117,7 @@ describe('request', () => {
 
       wykop
         .request({
-          apiParams: ['Login', 'Index'],
+          methods: ['Login', 'Index'],
           postParams: { login: 'ASD', token: 'ASD' },
         })
         .then((res) => expect(res.data.user.login).toEqual('QWERTY'));
@@ -145,7 +146,7 @@ describe('request', () => {
 
       wykop
         .request({
-          apiParams: ['Login', 'Index'],
+          methods: ['Login', 'Index'],
           postParams: { login: 'ASD', token: 'ASD', embed: file },
         })
         .then((res) => expect(res.data.user.login).toEqual('QWERTY'));
