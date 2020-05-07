@@ -55,12 +55,4 @@ jobs:
         env:
           NODE_AUTH_TOKEN: ${{ secrets.YARN_TOKEN }}
           GITHUB_TOKEN: ${{ secrets.GITHUB }}
-      - name: Use Node.js (Github registry)
-        uses: actions/setup-node@v1
-        with:
-          node-version: '12.x'
-          registry-url: 'https://npm.pkg.github.com'
-      - name: Auto publish to github
-        uses: luvies/action-yarn-publish@v0.1.1
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.GITHUB }}
+
