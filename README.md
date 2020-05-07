@@ -12,7 +12,7 @@
 ## Instalacja
 
 `yarn add wykop-v2-typescript`  
-or  
+lub  
 `npm install wykop-v2-typescript`
 
 ## Dokumentacja API v2
