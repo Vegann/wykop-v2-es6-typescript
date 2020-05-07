@@ -5,22 +5,21 @@
 ![Node.js CI](https://github.com/Vegann/wykop-v2-typescript/workflows/Node.js%20CI/badge.svg)
 [![dependencies Status](https://david-dm.org/Vegann/wykop-v2-typescript/status.svg)](https://david-dm.org/Vegann/wykop-v2-typescript)
 
-[Read in English](./README.en.md)
 
-### Prosty wrapper dla gównianego API v2 Wykopu
+### Simple, minimal wrapper for shitty wykop api v2
 
-## Instalacja
+## Instalation
 
 `yarn add wykop-v2-typescript`  
 or  
 `npm install wykop-v2-typescript`
 
-## Dokumentacja API v2
+## Wykop Api v2 documentation
 
 https://www.wykop.pl/dla-programistow/apiv2/
 
 
-## Inicializacja
+## Initialization
 
 ```typescript
 import wykop from "wykop-v2-typescript"
@@ -28,14 +27,14 @@ import wykop from "wykop-v2-typescript"
 const wykop = new Wykop({
   appKey: string,
   appSecret: string,
-  secure: boolean, // Jeżeli ustawione na 'true' url będzie prefixowane 'https', w przeciwnym wypadku 'http'
-  wykopUrl: string // Url api (bez końcowego slasha)
+  secure: boolean, // if set to true url will be prefixed with 'https', otherwise 'http'
+  wykopUrl: string // base url for wykop (without trailing slash)
   }
-  userkey: string // userkey użytkownika
+  userkey: string // userkey uses for requests
 )
 ```
 
-## Opcje domyślne
+## Default options
 
 ```javascript
 {
@@ -47,27 +46,27 @@ const wykop = new Wykop({
 userkey: undefined
 ```
 
-## Parametry metody `request`
+## Request parameters
 
 ```typescript
 wykop.request({
-  methods: string[] // Arrayka stringów, zostanie przeparsowana na string/string/
+  methods: string[] // array with strings, will be parsed as string/string/
   ,
   namedParams: {
     [key: string]: string | number
-  } // Objekt z parametrami, będzie przeparsowany na key/value/key/value
+  } // object with API parameters, will be parsed as key/value/key/value
   ,
-  apiParams: string[] // Arayka stringów zostanie przeparsowana na string/string/
+  apiParams: string[] // array with strings, will be parsed as string/string/
   ,
   postParams: {
     [key: string]: string | number
-  } // Objekt, będzie wysłany w body jako key=value&key=value
+  } // object will be send in body as key=value&key=value
 })
 ```
 
-## Przykładowe użycie (bez logowania użytkownika)
+## Example request (without logging user)
 
-- Bez async/await
+- Without async/await
 ```javascript
 const wykop = new Wykop({
    appKey: 'asdnasdnad',
@@ -78,16 +77,16 @@ wykop.request({
   methods: ['Entries', 'Hot'],
   namedParams: { page: 1, period: 6 }
 }).then((res) => {
-  // Odpowiedź z Wykopu
+  // Response from wykop
 }).catch((error) => {
-  // Jeżeli coś pójdzie nie tak 😁
+  // Only if something went wrong 😁
 });
 ```
 
-- Z async/await
+- With async/await
 
 ```javascript
-// Nie zapomnij żeby umieścić ten kod w asyncowej funkcji
+// Dont forget to put this code in async function
 const wykop = new Wykop({
    appKey: 'asdnasdnad',
    appSecret: 'sdakdsajd'
@@ -98,15 +97,15 @@ try {
     methods: ['Entries', 'Hot'],
     namedParams: { page: 1, period: 6 }
   })
-  // Tu możesz zrobić coś z responsem
+  // Your code here
 } catch(err) {
-  // Jeżeli coś pójdzie nie tak 😁
+  // Only if something went wrong 😁
 }
 ```
 
-## Przykładowe użycie (z userkey)
+## Example request (with userkey)
 
-- Bez async/await
+- Without async/await
 ```javascript
 const wykop = new Wykop({
    appKey: 'asdnasdnad',
@@ -117,20 +116,20 @@ wykop.request({
   methods: ["Login","Index"],
   postParams: { login: "Vegann", accountkey: "Token from wykop connect" }
 }).then(() => {
-  // userkey zostanie przechowane w wykop.userkey i użyte przy następnym zapytaniu, nie musisz go podawać po zalogowaniu
+  // userkey will be stored in wykop.userkey you dont need to provide it once logged in
   return wykop.request({
     methods: ['Entries', 'Add'],
     postParams: { body: "Body" }
   })
 }).then((res) => {
-  // Odpowiedź z Wykopu
+  // Response from wykop
 }).catch((error) => {
-  // Jeżeli coś pójdzie nie tak 😁
+  // Only if something went wrong 😁
 });
 ```
-- Z async/await
+- With async/await
 ```javascript
-// Nie zapomnij wstawić tego w funkcje asynkową
+// Dont forget to put this code in async function
 const wykop = new Wykop({
    appKey: 'asdnasdnad',
    appSecret: 'sdakdsajd'
@@ -144,20 +143,20 @@ try {
       accountkey: "Token from wykop connect"
     }
   })
-  // userkey zostanie przechowane w wykop.userkey, nie musisz go podawać po zalogowaniu
+  // userkey will be stored in wykop.userkey you dont need to provide it in next requests once logged in
   const res = await wykop.request({
     methods: ['Entries', 'Add'],
     postParams: { body: "Body" }
   })
-  // Odpowiedź z Wykop
+  // Response from wykop
 } catch(err) {
-  // Jeżli coś pójdzie nie tak 😁
+  // Only if something went wrong 😁
 }
 ```
 
-## Link do Wykop Connect
+## Getting link for Wykop connect
 
-- Bez przekierowania
+- Without redirect
 
 ```javascript
 const wykop = new Wykop({
@@ -168,10 +167,10 @@ const wykop = new Wykop({
 const { url } = wykop.wykopConnectLink();
 ```
 
-1. Umieść `url` w tagu `a`
+1. Put `url` in `a` tag
 
 
-- Z przekierowaniem
+- With redirect
 
 ```javascript
 const wykop = new Wykop({
@@ -182,11 +181,11 @@ const wykop = new Wykop({
 const { url, secure } = wykop.wykopConnectLink('http://localhost:8080');
 ```
 
-1. Po zalogowaniu użytkownik zostanie przekierowany na `http://localhost:8080/?connectData=XXXXXXXXXX`
+1. After user logs in to Wykop will redirect be to `http://localhost:8080/?connectData=XXXXXXXXXX`
 
-2. Możesz złapać `XXXXXXXXXX` z urla i zdekodować użytkownika przy pomocy:
+2. Then you can catch `XXXXXXXXXX` from url and decode user with:
 
 ```javascript
 JSON.parse(atob('XXXXXXXXXX'))
 ```
-3. Użyj `secure` żeby sprawdić przy poprawny użytkownik został zwrócony
+3. Use `secure` for checking if correct user was returned
