@@ -62,6 +62,8 @@ wykop.request({
   postParams: {
     [key: string]: string | number
   } // Objekt, będzie wysłany w body jako key=value&key=value
+  ,
+  reorderParams: boolean = false // Jeżeli dostajesz w odpwiedzi, że coś nie istnieje spróbuj ustawić tą wartośc na true
 })
 ```
 

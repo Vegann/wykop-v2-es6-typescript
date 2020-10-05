@@ -1,10 +1,10 @@
 # wykop-v2-typescript
+
 [![npm version](https://badge.fury.io/js/wykop-v2-typescript.svg)](https://badge.fury.io/js/wykop-v2-typescript)
 [![Maintainability](https://api.codeclimate.com/v1/badges/e60b7a455b4fdacaa44c/maintainability)](https://codeclimate.com/github/Vegann/wykop-v2-typescript/maintainability)
 [![Test Coverage](https://api.codeclimate.com/v1/badges/e60b7a455b4fdacaa44c/test_coverage)](https://codeclimate.com/github/Vegann/wykop-v2-typescript/test_coverage)
 ![Node.js CI](https://github.com/Vegann/wykop-v2-typescript/workflows/Node.js%20CI/badge.svg)
 [![dependencies Status](https://david-dm.org/Vegann/wykop-v2-typescript/status.svg)](https://david-dm.org/Vegann/wykop-v2-typescript)
-
 
 ### Simple, minimal wrapper for shitty wykop api v2
 
@@ -17,7 +17,6 @@ or
 ## Wykop Api v2 documentation
 
 https://www.wykop.pl/dla-programistow/apiv2/
-
 
 ## Initialization
 
@@ -61,26 +60,32 @@ wykop.request({
   postParams: {
     [key: string]: string | number
   } // object will be send in body as key=value&key=value
+  ,
+  reorderParams: boolean = false // If your request returns that something doesn't exists try to set this to true
 })
 ```
 
 ## Example request (without logging user)
 
 - Without async/await
+
 ```javascript
 const wykop = new Wykop({
-   appKey: 'asdnasdnad',
-   appSecret: 'sdakdsajd'
+  appKey: 'asdnasdnad',
+  appSecret: 'sdakdsajd',
 });
 
-wykop.request({
-  methods: ['Entries', 'Hot'],
-  namedParams: { page: 1, period: 6 }
-}).then((res) => {
-  // Response from wykop
-}).catch((error) => {
-  // Only if something went wrong 😁
-});
+wykop
+  .request({
+    methods: ['Entries', 'Hot'],
+    namedParams: { page: 1, period: 6 },
+  })
+  .then((res) => {
+    // Response from wykop
+  })
+  .catch((error) => {
+    // Only if something went wrong 😁
+  });
 ```
 
 - With async/await
@@ -88,17 +93,17 @@ wykop.request({
 ```javascript
 // Dont forget to put this code in async function
 const wykop = new Wykop({
-   appKey: 'asdnasdnad',
-   appSecret: 'sdakdsajd'
+  appKey: 'asdnasdnad',
+  appSecret: 'sdakdsajd',
 });
 
 try {
   const response = await wykop.request({
     methods: ['Entries', 'Hot'],
-    namedParams: { page: 1, period: 6 }
-  })
+    namedParams: { page: 1, period: 6 },
+  });
   // Your code here
-} catch(err) {
+} catch (err) {
   // Only if something went wrong 😁
 }
 ```
@@ -106,50 +111,57 @@ try {
 ## Example request (with userkey)
 
 - Without async/await
+
 ```javascript
 const wykop = new Wykop({
-   appKey: 'asdnasdnad',
-   appSecret: 'sdakdsajd'
+  appKey: 'asdnasdnad',
+  appSecret: 'sdakdsajd',
 });
 
-wykop.request({
-  methods: ["Login","Index"],
-  postParams: { login: "Vegann", accountkey: "Token from wykop connect" }
-}).then(() => {
-  // userkey will be stored in wykop.userkey you dont need to provide it once logged in
-  return wykop.request({
-    methods: ['Entries', 'Add'],
-    postParams: { body: "Body" }
+wykop
+  .request({
+    methods: ['Login', 'Index'],
+    postParams: { login: 'Vegann', accountkey: 'Token from wykop connect' },
   })
-}).then((res) => {
-  // Response from wykop
-}).catch((error) => {
-  // Only if something went wrong 😁
-});
+  .then(() => {
+    // userkey will be stored in wykop.userkey you dont need to provide it once logged in
+    return wykop.request({
+      methods: ['Entries', 'Add'],
+      postParams: { body: 'Body' },
+    });
+  })
+  .then((res) => {
+    // Response from wykop
+  })
+  .catch((error) => {
+    // Only if something went wrong 😁
+  });
 ```
+
 - With async/await
+
 ```javascript
 // Dont forget to put this code in async function
 const wykop = new Wykop({
-   appKey: 'asdnasdnad',
-   appSecret: 'sdakdsajd'
+  appKey: 'asdnasdnad',
+  appSecret: 'sdakdsajd',
 });
 
 try {
   await wykop.request({
-    methods: ["Login","Index"],
+    methods: ['Login', 'Index'],
     postParams: {
-      login: "Vegann",
-      accountkey: "Token from wykop connect"
-    }
-  })
+      login: 'Vegann',
+      accountkey: 'Token from wykop connect',
+    },
+  });
   // userkey will be stored in wykop.userkey you dont need to provide it in next requests once logged in
   const res = await wykop.request({
     methods: ['Entries', 'Add'],
-    postParams: { body: "Body" }
-  })
+    postParams: { body: 'Body' },
+  });
   // Response from wykop
-} catch(err) {
+} catch (err) {
   // Only if something went wrong 😁
 }
 ```
@@ -160,8 +172,8 @@ try {
 
 ```javascript
 const wykop = new Wykop({
-   appKey: 'asdnasdnad',
-   appSecret: 'sdakdsajd'
+  appKey: 'asdnasdnad',
+  appSecret: 'sdakdsajd',
 });
 
 const { url } = wykop.wykopConnectLink();
@@ -169,13 +181,12 @@ const { url } = wykop.wykopConnectLink();
 
 1. Put `url` in `a` tag
 
-
 - With redirect
 
 ```javascript
 const wykop = new Wykop({
-   appKey: 'asdnasdnad',
-   appSecret: 'sdakdsajd'
+  appKey: 'asdnasdnad',
+  appSecret: 'sdakdsajd',
 });
 
 const { url, secure } = wykop.wykopConnectLink('http://localhost:8080');
@@ -186,6 +197,7 @@ const { url, secure } = wykop.wykopConnectLink('http://localhost:8080');
 2. Then you can catch `XXXXXXXXXX` from url and decode user with:
 
 ```javascript
-JSON.parse(atob('XXXXXXXXXX'))
+JSON.parse(atob('XXXXXXXXXX'));
 ```
+
 3. Use `secure` for checking if correct user was returned

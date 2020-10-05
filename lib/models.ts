@@ -36,4 +36,5 @@ export interface IRequestParams {
   namedParams?: INamedParams;
   apiParams?: string[];
   postParams?: IPostParams;
+  reorderParams?: boolean;
 }
