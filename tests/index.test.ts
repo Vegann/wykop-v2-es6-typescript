@@ -183,6 +183,33 @@ describe('request', () => {
     );
   });
 
+  it('can reorder params', () => {
+    const wykop = new Wykop({ appKey: 'asdnasdnad', appSecret: 'sdakdsajd' });
+
+    fetchMock.mockResponseOnce(
+      JSON.stringify({
+        data: [1, 2, 3],
+      }),
+    );
+
+    wykop
+      .request({
+        methods: ['Entries', 'Hot'],
+        namedParams: { page: 1, period: 6 },
+        apiParams: ['1111'],
+        reorderParams: true,
+      })
+      .then((res) => {
+        expect(res.data.length).toBeGreaterThan(0);
+      });
+
+    expect(fetchMock).toBeCalled();
+    expect(fetchMock).toBeCalledWith(
+      'https://a2.wykop.pl/Entries/Hot/1111/page/1/period/6/appkey/asdnasdnad/',
+      expect.any(Object),
+    );
+  });
+
   describe('returns corect data with postParams', () => {
     test('without embed', () => {
       const wykop = new Wykop({ appKey: 'aaa', appSecret: 'aaa' });
