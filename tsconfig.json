@@ -1,12 +1,6 @@
 {
-  "include": [
-    "lib"
-  ],
-  "exclude": [
-    "node_modules",
-    "tests",
-    "dist"
-  ],
+  "include": ["lib"],
+  "exclude": ["node_modules", "tests", "dist"],
   "compileOnSave": true,
   "compilerOptions": {
     "module": "commonjs",

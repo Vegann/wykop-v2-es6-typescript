@@ -1,10 +1,17 @@
-import fetch, { Headers } from 'node-fetch';
 // eslint-disable-next-line no-unused-vars
-import * as FormData from 'form-data';
 import { stringify } from 'querystring';
+import axios, { AxiosRequestConfig } from 'axios';
+import * as FormData from 'form-data';
 import { md5, convertToFormData } from './utils';
-// eslint-disable-next-line no-unused-vars
-import { INamedParams, IData, IConfig, IPostParams, IWykopConnect, IRequestParams } from './models';
+import {
+  INamedParams,
+  IData,
+  IConfig,
+  IPostParams,
+  IWykopConnect,
+  IRequestParams,
+  WHeaders,
+} from './models';
 
 export default class Wykop {
   private readonly config: IConfig;
@@ -39,14 +46,14 @@ export default class Wykop {
     this.userkeyUrl = `userkey/${this.userkey}/`;
   }
 
-  private generateHeaders(url: string, postParams?: IPostParams): Headers {
-    const headers = new Headers({
+  private generateHeaders(url: string, postParams?: IPostParams): WHeaders {
+    const headers: WHeaders = {
       apisign: md5(this.config.appSecret + url, postParams),
       'User-Agent': 'wykop-v2-typescript',
-    });
+    };
 
     if (postParams && typeof postParams.embed !== 'object') {
-      headers.set('Content-Type', 'application/x-www-form-urlencoded');
+      headers['Content-Type'] = 'application/x-www-form-urlencoded';
     }
 
     return headers;
@@ -110,7 +117,7 @@ export default class Wykop {
     }
     const headers = this.generateHeaders(url, postParams);
 
-    let method: string = 'GET';
+    let method: AxiosRequestConfig['method'] = 'GET';
     const body = Wykop.bodyFromPostParams(postParams);
 
     if (body) {
@@ -118,16 +125,15 @@ export default class Wykop {
     }
 
     return new Promise((resolve, reject) => {
-      fetch(url, { method, headers, body })
-        .then((res) => res.json())
-        .then((res: IData) => {
-          if (res.data?.userkey) {
-            this.userkey = res.data.userkey;
+      axios({ url, method, headers, data: body })
+        .then(({ data }: { data: IData }) => {
+          if (data?.error) return reject(data.error);
+          if (data?.data.userkey) {
+            this.userkey = data.data.userkey;
             this.generateUserkeyUrl();
           }
 
-          if (res.error) return reject(res.error);
-          return resolve(res);
+          return resolve(data);
         })
         .catch((error: Error) => reject(error));
     });

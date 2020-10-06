@@ -38,3 +38,8 @@ export interface IRequestParams {
   postParams?: IPostParams;
   reorderParams?: boolean;
 }
+export interface WHeaders {
+  apisign: string;
+  'User-Agent': string;
+  'Content-Type'?: string;
+}
