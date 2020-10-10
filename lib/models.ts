@@ -41,6 +41,6 @@ export interface IRequestParams {
 }
 export interface WHeaders {
   apisign: string;
-  'User-Agent': string;
+  'User-Agent'?: string;
   'Content-Type'?: string;
 }

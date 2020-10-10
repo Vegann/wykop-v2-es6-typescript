@@ -31,7 +31,7 @@ export default class Wykop {
     this.config = {
       ssl: config.ssl || true,
       wykopUrl: config.wykopUrl || 'a2.wykop.pl',
-      userAgent: config.userAgent || 'wykop-v2-typescript',
+      userAgent: config.userAgent,
       appKey: config.appKey,
       appSecret: config.appSecret,
     };
@@ -51,8 +51,10 @@ export default class Wykop {
   private generateHeaders(url: string, postParams?: IPostParams): WHeaders {
     const headers: WHeaders = {
       apisign: md5(this.config.appSecret + url, postParams),
-      'User-Agent': this.config.userAgent!,
     };
+    if (this.config.userAgent) {
+      headers['User-Agent'] = this.config.userAgent;
+    }
 
     if (postParams && typeof postParams.embed !== 'object') {
       headers['Content-Type'] = 'application/x-www-form-urlencoded';
