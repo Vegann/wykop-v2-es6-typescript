@@ -16,7 +16,7 @@ module.exports = {
   },
   plugins: ['jest', '@typescript-eslint'],
   rules: {
-    'max-len': ['error', { code: 100 }],
+    'max-len': ['error', { code: 120 }],
     'import/extensions': ['error', { ts: 'never' }],
   },
   settings: {

@@ -27,11 +27,13 @@ export default class Wykop {
   userkey?: string;
 
   // eslint-disable-next-line no-unused-vars, no-useless-constructor, no-empty-function
-  constructor(config: Pick<IConfig, 'appKey' | 'appSecret'>, userkey?: string) {
+  constructor(config: IConfig, userkey?: string) {
     this.config = {
-      ssl: true,
-      wykopUrl: 'a2.wykop.pl',
-      ...config,
+      ssl: config.ssl || true,
+      wykopUrl: config.wykopUrl || 'a2.wykop.pl',
+      userAgent: config.userAgent || 'wykop-v2-typescript',
+      appKey: config.appKey,
+      appSecret: config.appSecret,
     };
     this.protocol = this.config.ssl ? 'https' : 'http';
     this.baseUrl = `${this.protocol}://${this.config.wykopUrl}`;
@@ -49,7 +51,7 @@ export default class Wykop {
   private generateHeaders(url: string, postParams?: IPostParams): WHeaders {
     const headers: WHeaders = {
       apisign: md5(this.config.appSecret + url, postParams),
-      'User-Agent': 'wykop-v2-typescript',
+      'User-Agent': this.config.userAgent!,
     };
 
     if (postParams && typeof postParams.embed !== 'object') {

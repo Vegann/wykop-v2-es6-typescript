@@ -26,9 +26,10 @@ export interface IData {
 
 export interface IConfig {
   appKey: string;
-  appSecret: string;
-  wykopUrl: string;
-  ssl: boolean;
+  appSecret?: string;
+  wykopUrl?: string;
+  ssl?: boolean;
+  userAgent?: string;
 }
 
 export interface IRequestParams {
