@@ -33,6 +33,32 @@ describe('request', () => {
     mockAxios.reset();
   });
 
+  it('adds apisign header if appSecret is specyfied', () => {
+    const wykop = new Wykop({ appKey: 'asdnasdnad', appSecret: 'sdakdsajd', userAgent: 'AAAA' });
+    wykop.request({
+      methods: ['Entries', 'Hot'],
+      namedParams: { page: 1, period: 6 },
+    });
+    const firstRequestInfo = mockAxios.lastReqGet();
+    mockAxios.mockResponse({ data: { data: 'data' } });
+
+    expect(firstRequestInfo.config.headers.apisign).toEqual('56349fb7680d68bbf4be2516f727a0bf');
+  });
+
+  it("doesn't add apisign header if  appSecret is not specyfied", () => {
+    const wykop = new Wykop({
+      appKey: 'asdnasdnad',
+    });
+    wykop.request({
+      methods: ['Entries', 'Hot'],
+      namedParams: { page: 1, period: 6 },
+    });
+    const firstRequestInfo = mockAxios.lastReqGet();
+    mockAxios.mockResponse({ data: { data: 'data' } });
+
+    expect(firstRequestInfo.config.headers.apisign).toBeUndefined();
+  });
+
   it('adds User-Agent specified in config', () => {
     const wykop = new Wykop({ appKey: 'asdnasdnad', appSecret: 'sdakdsajd', userAgent: 'AAAA' });
     wykop.request({

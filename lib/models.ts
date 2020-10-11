@@ -40,7 +40,7 @@ export interface IRequestParams {
   reorderParams?: boolean;
 }
 export interface WHeaders {
-  apisign: string;
+  apisign?: string;
   'User-Agent'?: string;
   'Content-Type'?: string;
 }

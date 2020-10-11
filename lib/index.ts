@@ -49,9 +49,10 @@ export default class Wykop {
   }
 
   private generateHeaders(url: string, postParams?: IPostParams): WHeaders {
-    const headers: WHeaders = {
-      apisign: md5(this.config.appSecret + url, postParams),
-    };
+    const headers: WHeaders = {};
+    if (this.config.appSecret) {
+      headers.apisign = md5(this.config.appSecret + url, postParams);
+    }
     if (this.config.userAgent) {
       headers['User-Agent'] = this.config.userAgent;
     }
