@@ -87,12 +87,14 @@ export default class Wykop {
       config: { appSecret },
     } = this;
 
+    const secret = appSecret || '';
+
     let url: string = `${baseUrl}/login/connect/${appKeyUrl}`;
     let secure: undefined | string;
     if (redirect) {
       const redirectBuffer = Buffer.from(redirect, 'utf-8');
       const encodedUri = encodeURI(redirectBuffer.toString('base64'));
-      secure = md5(appSecret + redirect);
+      secure = md5(secret + redirect);
       url += `redirect/${encodedUri}/secure/${secure}/`;
     }
     return { url, secure };
