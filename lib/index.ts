@@ -1,5 +1,5 @@
 // eslint-disable-next-line no-unused-vars
-import { stringify } from 'querystring';
+import { stringify } from 'query-string';
 import axios, { AxiosRequestConfig } from 'axios';
 import * as FormData from 'form-data';
 import { md5, convertToFormData } from './utils';

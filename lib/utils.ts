@@ -1,4 +1,4 @@
-import { createHash } from 'crypto';
+import * as cryptoJs from 'crypto-js';
 import * as FormData from 'form-data';
 
 // eslint-disable-next-line no-unused-vars
@@ -17,7 +17,7 @@ export function md5(string: string, postParams?: IPostParams): string {
       .map((key) => clonedPostParams[key])
       .join(',');
   }
-  return createHash('md5').update(data).digest('hex');
+  return cryptoJs.MD5(data).toString(cryptoJs.enc.Hex);
 }
 
 export function convertToFormData(object: { [key: string]: any }): FormData {
