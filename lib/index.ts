@@ -22,8 +22,6 @@ export default class Wykop {
 
   private readonly appKeyUrl: string;
 
-  private userkeyUrl: string = '';
-
   userkey?: string;
 
   // eslint-disable-next-line no-unused-vars, no-useless-constructor, no-empty-function
@@ -40,12 +38,11 @@ export default class Wykop {
     this.appKeyUrl = `appkey/${config.appKey}/`;
     if (userkey) {
       this.userkey = userkey;
-      this.generateUserkeyUrl();
     }
   }
 
-  private generateUserkeyUrl() {
-    this.userkeyUrl = `userkey/${this.userkey}/`;
+  private userkeyUrl() {
+    return this.userkey ? `userkey/${this.userkey}/` : '';
   }
 
   private generateHeaders(url: string, postParams?: IPostParams): WHeaders {
@@ -107,7 +104,7 @@ export default class Wykop {
     postParams,
     reorderParams = false,
   }: IRequestParams): Promise<any> {
-    const { baseUrl, appKeyUrl, userkeyUrl } = this;
+    const { baseUrl, appKeyUrl } = this;
 
     let parsedNamedParams: string = '';
     if (namedParams) parsedNamedParams = Wykop.parseNamedParams(namedParams);
@@ -118,9 +115,9 @@ export default class Wykop {
     const joinedMethods = `${methods.join('/')}/`;
     let url: string;
     if (reorderParams) {
-      url = `${baseUrl}/${joinedMethods}${joinedApiParams}${parsedNamedParams}${appKeyUrl}${userkeyUrl}`;
+      url = `${baseUrl}/${joinedMethods}${joinedApiParams}${parsedNamedParams}${appKeyUrl}${this.userkeyUrl()}`;
     } else {
-      url = `${baseUrl}/${joinedMethods}${parsedNamedParams}${joinedApiParams}${appKeyUrl}${userkeyUrl}`;
+      url = `${baseUrl}/${joinedMethods}${parsedNamedParams}${joinedApiParams}${appKeyUrl}${this.userkeyUrl()}`;
     }
     const headers = this.generateHeaders(url, postParams);
 
@@ -137,7 +134,6 @@ export default class Wykop {
           if (data?.error) return reject(data.error);
           if (data?.data.userkey) {
             this.userkey = data.data.userkey;
-            this.generateUserkeyUrl();
           }
 
           return resolve(data);
