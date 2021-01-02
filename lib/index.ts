@@ -3,17 +3,9 @@ import { stringify } from 'query-string';
 import axios, { AxiosRequestConfig } from 'axios';
 import * as FormData from 'form-data';
 import { md5, convertToFormData } from './utils';
-import {
-  INamedParams,
-  IData,
-  IConfig,
-  IPostParams,
-  IWykopConnect,
-  IRequestParams,
-  WHeaders,
-} from './models';
 
 export default class Wykop {
+  // eslint-disable-next-line no-undef
   private readonly config: IConfig;
 
   private readonly protocol: string;
@@ -24,7 +16,7 @@ export default class Wykop {
 
   userkey?: string;
 
-  // eslint-disable-next-line no-unused-vars, no-useless-constructor, no-empty-function
+  // eslint-disable-next-line no-undef
   constructor(config: IConfig, userkey?: string) {
     this.config = {
       ssl: config.ssl || true,
@@ -45,7 +37,9 @@ export default class Wykop {
     return this.userkey ? `userkey/${this.userkey}/` : '';
   }
 
+  // eslint-disable-next-line no-undef
   private generateHeaders(url: string, postParams?: IPostParams): WHeaders {
+    // eslint-disable-next-line no-undef
     const headers: WHeaders = {};
     if (this.config.appSecret) {
       headers.apisign = md5(this.config.appSecret + url, postParams);
@@ -61,6 +55,7 @@ export default class Wykop {
     return headers;
   }
 
+  // eslint-disable-next-line no-undef
   private static parseNamedParams(namedParams: INamedParams): string {
     const parsedNamedParams: string = Object.keys(namedParams)
       .map((key) => `${key}/${namedParams[key]}`)
@@ -68,6 +63,7 @@ export default class Wykop {
     return `${parsedNamedParams}/`;
   }
 
+  // eslint-disable-next-line no-undef
   private static bodyFromPostParams(postParams?: IPostParams): undefined | string | FormData {
     if (!postParams) return undefined;
 
@@ -77,6 +73,7 @@ export default class Wykop {
     return convertToFormData(postParams);
   }
 
+  // eslint-disable-next-line no-undef
   public wykopConnectLink(redirect?: string): IWykopConnect {
     const {
       baseUrl,
@@ -103,7 +100,8 @@ export default class Wykop {
     apiParams,
     postParams,
     reorderParams = false,
-  }: IRequestParams): Promise<any> {
+  }: // eslint-disable-next-line no-undef
+  IRequestParams): Promise<any> {
     const { baseUrl, appKeyUrl } = this;
 
     let parsedNamedParams: string = '';
@@ -130,6 +128,7 @@ export default class Wykop {
 
     return new Promise((resolve, reject) => {
       axios({ url, method, headers, data: body })
+        // eslint-disable-next-line no-undef
         .then(({ data }: { data: IData }) => {
           if (data?.error) return reject(data.error);
           if (data?.data.userkey) {

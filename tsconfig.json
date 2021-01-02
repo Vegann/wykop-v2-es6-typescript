@@ -1,5 +1,5 @@
 {
-  "include": ["lib"],
+  "include": ["lib", "types.d.ts"],
   "exclude": ["node_modules", "tests", "dist"],
   "compileOnSave": true,
   "compilerOptions": {
@@ -7,7 +7,7 @@
     "strict": true,
     "declaration": true,
     "noImplicitAny": true,
-    "sourceMap": true,
+    "removeComments": true,
     "target": "es5",
     "outDir": "dist"
   }

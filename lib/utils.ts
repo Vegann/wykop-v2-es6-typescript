@@ -1,10 +1,8 @@
-import * as cryptoJs from 'crypto-js';
+import * as MD5 from 'crypto-js/md5';
+import * as Hex from 'crypto-js/enc-hex';
 import * as FormData from 'form-data';
 
-// eslint-disable-next-line no-unused-vars
-import { IPostParams } from './models';
-
-// eslint-disable-next-line import/prefer-default-export
+// eslint-disable-next-line no-undef
 export function md5(string: string, postParams?: IPostParams): string {
   let data = string;
   if (postParams) {
@@ -17,7 +15,7 @@ export function md5(string: string, postParams?: IPostParams): string {
       .map((key) => clonedPostParams[key])
       .join(',');
   }
-  return cryptoJs.MD5(data).toString(cryptoJs.enc.Hex);
+  return MD5(data).toString(Hex);
 }
 
 export function convertToFormData(object: { [key: string]: any }): FormData {
