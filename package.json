@@ -1,6 +1,6 @@
 {
   "name": "wykop-v2-typescript",
-  "version": "1.7.0",
+  "version": "1.8.0",
   "description": "Wykop API v2 wrapper",
   "module": "dist/index.es.js",
   "main": "./dist/index.js",
