@@ -25,3 +25,11 @@ export function convertToFormData(object: { [key: string]: any }): FormData {
   });
   return formData;
 }
+export function stringify(params: { [key: string]: string }) {
+  const escape = encodeURIComponent;
+  return Object.keys(params)
+    .map((key) => {
+      return `${escape(key)}=${unescape(escape(params[key]))}`;
+    })
+    .join('&');
+}

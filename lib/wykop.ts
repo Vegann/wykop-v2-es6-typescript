@@ -1,7 +1,6 @@
 import fetch from 'node-fetch';
 import * as FormData from 'form-data';
-import { stringify } from 'qs';
-import { md5, convertToFormData } from './utils';
+import { md5, convertToFormData, stringify } from './utils';
 
 import {
   IConfig,
