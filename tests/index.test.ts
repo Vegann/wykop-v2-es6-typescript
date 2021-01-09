@@ -260,7 +260,7 @@ describe('request', () => {
       wykop
         .request({
           methods: ['Login', 'Index'],
-          postParams: { login: 'ASD', token: 'ASD' },
+          postParams: { login: 'ASD', token: { a: 'ASD' } },
         })
         .then((res) => expect(res.data.user.login).toEqual('QWERTY'));
       const firstRequestInfo = mockAxios.lastReqGet();

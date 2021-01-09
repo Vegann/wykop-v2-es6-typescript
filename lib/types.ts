@@ -1,30 +1,30 @@
 /* eslint-disable no-unused-vars */
-interface INamedParams {
+export interface INamedParams {
   [key: string]: any;
 }
-interface IPostParams {
+export interface IPostParams {
   [key: string]: any;
 }
 
-interface IWykopConnect {
+export interface IWykopConnect {
   url: string;
   secure: string | undefined;
 }
 
 /* eslint-disable camelcase */
-interface IError {
+export interface IError {
   code: number;
   field: any;
   message_en: string;
   message_pl: string;
 }
 
-interface IData {
+export interface IData {
   [key: string]: any;
   error: IError;
 }
 
-interface IConfig {
+export interface IConfig {
   appKey: string;
   appSecret?: string;
   wykopUrl?: string;
@@ -32,14 +32,14 @@ interface IConfig {
   userAgent?: string;
 }
 
-interface IRequestParams {
+export interface IRequestParams {
   methods: string[];
   namedParams?: INamedParams;
   apiParams?: string[];
   postParams?: IPostParams;
   reorderParams?: boolean;
 }
-interface WHeaders {
+export interface WHeaders {
   apisign?: string;
   'User-Agent'?: string;
   'Content-Type'?: string;
