@@ -2,7 +2,6 @@ import FormData from 'form-data';
 import MD5 from './md5';
 import { IPostParams } from './types';
 
-// eslint-disable-next-line no-undef
 export function md5(string: string, postParams?: IPostParams): string {
   let data = string;
   if (postParams) {

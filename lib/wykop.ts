@@ -1,5 +1,4 @@
-// eslint-disable-next-line no-unused-vars
-import axios, { AxiosRequestConfig } from 'axios';
+import fetch from 'node-fetch';
 import * as FormData from 'form-data';
 import { stringify } from 'qs';
 import { md5, convertToFormData } from './utils';
@@ -15,7 +14,6 @@ import {
 } from './types';
 
 export default class Wykop {
-  // eslint-disable-next-line no-undef
   private readonly config: IConfig;
 
   private readonly protocol: string;
@@ -26,7 +24,6 @@ export default class Wykop {
 
   userkey?: string;
 
-  // eslint-disable-next-line no-undef
   constructor(config: IConfig, userkey?: string) {
     this.config = {
       ssl: config.ssl || true,
@@ -47,9 +44,7 @@ export default class Wykop {
     return this.userkey ? `userkey/${this.userkey}/` : '';
   }
 
-  // eslint-disable-next-line no-undef
   private generateHeaders(url: string, postParams?: IPostParams): WHeaders {
-    // eslint-disable-next-line no-undef
     const headers: WHeaders = {};
     if (this.config.appSecret) {
       headers.apisign = md5(this.config.appSecret + url, postParams);
@@ -65,7 +60,6 @@ export default class Wykop {
     return headers;
   }
 
-  // eslint-disable-next-line no-undef
   private static parseNamedParams(namedParams: INamedParams): string {
     const parsedNamedParams: string = Object.keys(namedParams)
       .map((key) => `${key}/${namedParams[key]}`)
@@ -73,7 +67,6 @@ export default class Wykop {
     return `${parsedNamedParams}/`;
   }
 
-  // eslint-disable-next-line no-undef
   private static bodyFromPostParams(postParams?: IPostParams): undefined | string | FormData {
     if (!postParams) return undefined;
 
@@ -83,7 +76,6 @@ export default class Wykop {
     return convertToFormData(postParams);
   }
 
-  // eslint-disable-next-line no-undef
   public wykopConnectLink(redirect?: string): IWykopConnect {
     const {
       baseUrl,
@@ -110,8 +102,7 @@ export default class Wykop {
     apiParams,
     postParams,
     reorderParams = false,
-  }: // eslint-disable-next-line no-undef
-  IRequestParams): Promise<any> {
+  }: IRequestParams): Promise<any> {
     const { baseUrl, appKeyUrl } = this;
 
     let parsedNamedParams: string = '';
@@ -129,7 +120,7 @@ export default class Wykop {
     }
     const headers = this.generateHeaders(url, postParams);
 
-    let method: AxiosRequestConfig['method'] = 'GET';
+    let method = 'GET';
     const body = Wykop.bodyFromPostParams(postParams);
 
     if (body) {
@@ -137,8 +128,13 @@ export default class Wykop {
     }
 
     return new Promise((resolve, reject) => {
-      axios({ url, method, headers, data: body })
-        // eslint-disable-next-line no-undef
+      fetch(url, { method, headers, body })
+        .then((res) => {
+          if (res.ok) {
+            return res.json();
+          }
+          throw new Error('Network problem');
+        })
         .then(({ data }: { data: IData }) => {
           if (data?.error) return reject(data.error);
           if (data?.data.userkey) {

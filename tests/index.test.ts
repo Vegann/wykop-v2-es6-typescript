@@ -1,6 +1,9 @@
-import mockAxios from 'jest-mock-axios';
+import fileMockJest from 'fetch-mock-jest';
 import Wykop from '../lib/index';
 import fileMock from './__mocks__/fileMock';
+
+jest.mock('node-fetch', () => fileMockJest.sandbox());
+const fetchMock = require('node-fetch');
 
 describe('wykopConnectLink', () => {
   describe('with redirect link', () => {
@@ -30,64 +33,71 @@ describe('wykopConnectLink', () => {
 
 describe('request', () => {
   beforeEach(() => {
-    mockAxios.reset();
+    fetchMock.reset();
   });
 
-  it('adds apisign header if appSecret is specyfied', () => {
+  it('adds apisign header if appSecret is specyfied', async () => {
     const wykop = new Wykop({ appKey: 'asdnasdnad', appSecret: 'sdakdsajd', userAgent: 'AAAA' });
-    wykop.request({
+    fetchMock.get(/Entries\/Hot\/page\/1\/period\/6/g, {
+      data: { data: 'data' },
+    });
+    await wykop.request({
       methods: ['Entries', 'Hot'],
       namedParams: { page: 1, period: 6 },
     });
-    const firstRequestInfo = mockAxios.lastReqGet();
-    mockAxios.mockResponse({ data: { data: 'data' } });
 
-    expect(firstRequestInfo.config.headers.apisign).toEqual('56349fb7680d68bbf4be2516f727a0bf');
+    expect(fetchMock.lastOptions().headers.apisign).toEqual('56349fb7680d68bbf4be2516f727a0bf');
   });
 
-  it("doesn't add apisign header if  appSecret is not specyfied", () => {
+  it("doesn't add apisign header if  appSecret is not specyfied", async () => {
     const wykop = new Wykop({
       appKey: 'asdnasdnad',
     });
-    wykop.request({
+    fetchMock.get(/Entries\/Hot\/page\/1\/period\/6/g, {
+      data: { data: 'data' },
+    });
+    await wykop.request({
       methods: ['Entries', 'Hot'],
       namedParams: { page: 1, period: 6 },
     });
-    const firstRequestInfo = mockAxios.lastReqGet();
-    mockAxios.mockResponse({ data: { data: 'data' } });
 
-    expect(firstRequestInfo.config.headers.apisign).toBeUndefined();
+    expect(fetchMock.lastOptions().headers.apisign).toBeUndefined();
   });
 
-  it('adds User-Agent specified in config', () => {
+  it('adds User-Agent specified in config', async () => {
     const wykop = new Wykop({ appKey: 'asdnasdnad', appSecret: 'sdakdsajd', userAgent: 'AAAA' });
-    wykop.request({
+    fetchMock.get(/Entries\/Hot\/page\/1\/period\/6/g, {
+      data: { data: 'data' },
+    });
+    await wykop.request({
       methods: ['Entries', 'Hot'],
       namedParams: { page: 1, period: 6 },
     });
-    const firstRequestInfo = mockAxios.lastReqGet();
-    mockAxios.mockResponse({ data: { data: 'data' } });
 
-    expect(firstRequestInfo.config.headers['User-Agent']).toEqual('AAAA');
+    expect(fetchMock.lastOptions().headers['User-Agent']).toEqual('AAAA');
   });
 
-  it("doesn't add User-Agent if is not in config", () => {
+  it("doesn't add User-Agent if is not in config", async () => {
     const wykop = new Wykop({
       appKey: 'asdnasdnad',
       appSecret: 'sdakdsajd',
     });
-    wykop.request({
+    fetchMock.get(/Entries\/Hot\/page\/1\/period\/6/g, {
+      data: { data: 'data' },
+    });
+    await wykop.request({
       methods: ['Entries', 'Hot'],
       namedParams: { page: 1, period: 6 },
     });
-    const firstRequestInfo = mockAxios.lastReqGet();
-    mockAxios.mockResponse({ data: { data: 'data' } });
 
-    expect(firstRequestInfo.config.headers['User-Agent']).toBeUndefined();
+    expect(fetchMock.lastOptions().headers['User-Agent']).toBeUndefined();
   });
 
   it('returns error if appKey is wrong', () => {
     const wykop = new Wykop({ appKey: 'asdnasdnad', appSecret: 'sdakdsajd' });
+    fetchMock.get(/Entries\/Hot\/page\/1\/period\/6/g, {
+      data: { error: { message_en: 'Invalid API key', code: 1 } },
+    });
 
     wykop
       .request({
@@ -98,16 +108,14 @@ describe('request', () => {
         expect(err.message_en).toBe('Invalid API key');
         expect(err.code).toBe(1);
       });
-    const firstRequestInfo = mockAxios.lastReqGet();
-    mockAxios.mockResponse({ data: { error: { message_en: 'Invalid API key', code: 1 } } });
 
-    expect(firstRequestInfo.url).toEqual(
+    expect(fetchMock.lastUrl()).toEqual(
       'https://a2.wykop.pl/Entries/Hot/page/1/period/6/appkey/asdnasdnad/',
     );
   });
 
   describe('userkey', () => {
-    it('correctly sets userkey if user provide it', () => {
+    it('correctly sets userkey if user provide it', async () => {
       const wykop = new Wykop(
         {
           appKey: 'asdnasdnad',
@@ -115,8 +123,13 @@ describe('request', () => {
         },
         'userkey',
       );
+      fetchMock.get(/Entries\/Hot\/page\/1\/period\/6/g, {
+        data: {
+          data: [1, 2, 3],
+        },
+      });
 
-      wykop
+      await wykop
         .request({
           methods: ['Entries', 'Hot'],
           namedParams: { page: 1, period: 6 },
@@ -124,20 +137,19 @@ describe('request', () => {
         .then((res) => {
           expect(res.data.length).toEqual(3);
         });
-      const firstRequestInfo = mockAxios.lastReqGet();
-      mockAxios.mockResponse({
-        data: {
-          data: [1, 2, 3],
-        },
-      });
-      expect(firstRequestInfo.url).toEqual(
+
+      expect(fetchMock.lastUrl()).toEqual(
         'https://a2.wykop.pl/Entries/Hot/page/1/period/6/appkey/asdnasdnad/userkey/userkey/',
       );
     });
 
     describe('correctly sets userkey if user request login', () => {
       const wykop = new Wykop({ appKey: 'asdnasdnad', appSecret: 'sdakdsajd' });
-
+      fetchMock.get(/Entries\/Hot\/page\/1\/period\/6/g, {
+        data: {
+          data: { userkey: 'userkey' },
+        },
+      });
       wykop
         .request({
           methods: ['Entries', 'Hot'],
@@ -147,13 +159,13 @@ describe('request', () => {
           expect(res.data.userkey).toEqual('userkey');
           expect(wykop.userkey).toEqual('userkey');
         });
-      mockAxios.mockResponse({
-        data: {
-          data: { userkey: 'userkey' },
-        },
-      });
 
       it('uses it after', () => {
+        fetchMock.get(/Entries\/Hot\/page\/1\/period\/6/g, {
+          data: {
+            data: [1, 2, 3],
+          },
+        });
         wykop
           .request({
             methods: ['Entries', 'Hot'],
@@ -163,14 +175,8 @@ describe('request', () => {
             expect(res.data.length).toEqual(3);
             expect(wykop.userkey).toEqual('userkey');
           });
-        const firstRequestInfo = mockAxios.lastReqGet();
 
-        mockAxios.mockResponse({
-          data: {
-            data: [1, 2, 3],
-          },
-        });
-        expect(firstRequestInfo.url).toEqual(
+        expect(fetchMock.lastUrl()).toEqual(
           'https://a2.wykop.pl/Entries/Hot/page/1/period/6/appkey/asdnasdnad/userkey/userkey/',
         );
       });
@@ -179,7 +185,11 @@ describe('request', () => {
 
   it('returns response if appKey is providen and valid', () => {
     const wykop = new Wykop({ appKey: 'asdnasdnad', appSecret: 'sdakdsajd' });
-
+    fetchMock.get(/Entries\/Hot\/page\/1\/period\/6/g, {
+      data: {
+        data: [1, 2, 3],
+      },
+    });
     wykop
       .request({
         methods: ['Entries', 'Hot'],
@@ -190,45 +200,37 @@ describe('request', () => {
         expect(res.data.length).toBeGreaterThan(0);
       });
 
-    const firstRequestInfo = mockAxios.lastReqGet();
-
-    mockAxios.mockResponse({
-      data: {
-        data: [1, 2, 3],
-      },
-    });
-
-    expect(firstRequestInfo.url).toEqual(
+    expect(fetchMock.lastUrl()).toEqual(
       'https://a2.wykop.pl/Entries/Hot/page/1/period/6/tag/appkey/asdnasdnad/',
     );
   });
 
-  it('returns error if something went wrong', () => {
+  it('returns error if Network problem', () => {
     const wykop = new Wykop({ appKey: 'asdnasdnad', appSecret: 'sdakdsajd' });
 
-    const error = new Error('something went wrong');
-
+    const error = new Error('Network problem');
+    fetchMock.get(/Entries\/Hot\/page\/1\/period\/6/g, 404);
     wykop
       .request({
         methods: ['Entries', 'Hot'],
         namedParams: { page: 1, period: 6 },
       })
       .catch((err) => {
-        expect(err).toBe(error);
+        expect(err).toStrictEqual(error);
       });
 
-    const firstRequestInfo = mockAxios.lastReqGet();
-
-    mockAxios.mockError(error);
-
-    expect(firstRequestInfo.url).toEqual(
+    expect(fetchMock.lastUrl()).toEqual(
       'https://a2.wykop.pl/Entries/Hot/page/1/period/6/appkey/asdnasdnad/',
     );
   });
 
   it('can reorder params', () => {
     const wykop = new Wykop({ appKey: 'asdnasdnad', appSecret: 'sdakdsajd' });
-
+    fetchMock.get(/Entries\/Hot\/1111\/page\/1\/period\/6/g, {
+      data: {
+        data: [1, 2, 3],
+      },
+    });
     wykop
       .request({
         methods: ['Entries', 'Hot'],
@@ -240,15 +242,7 @@ describe('request', () => {
         expect(res.data.length).toBeGreaterThan(0);
       });
 
-    const firstRequestInfo = mockAxios.lastReqGet();
-
-    mockAxios.mockResponse({
-      data: {
-        data: [1, 2, 3],
-      },
-    });
-
-    expect(firstRequestInfo.url).toEqual(
+    expect(fetchMock.lastUrl()).toEqual(
       'https://a2.wykop.pl/Entries/Hot/1111/page/1/period/6/appkey/asdnasdnad/',
     );
   });
@@ -256,25 +250,22 @@ describe('request', () => {
   describe('returns corect data with postParams', () => {
     test('without embed', () => {
       const wykop = new Wykop({ appKey: 'aaa', appSecret: 'aaa' });
-
+      fetchMock.post(/Login\/Index/g, {
+        data: {
+          data: { user: { login: 'QWERTY' } },
+        },
+      });
       wykop
         .request({
           methods: ['Login', 'Index'],
           postParams: { login: 'ASD', token: { a: 'ASD' } },
         })
         .then((res) => expect(res.data.user.login).toEqual('QWERTY'));
-      const firstRequestInfo = mockAxios.lastReqGet();
 
-      mockAxios.mockResponse({
-        data: {
-          data: { user: { login: 'QWERTY' } },
-        },
-      });
+      expect(fetchMock.lastUrl()).toEqual('https://a2.wykop.pl/Login/Index/appkey/aaa/');
 
-      expect(firstRequestInfo.url).toEqual('https://a2.wykop.pl/Login/Index/appkey/aaa/');
-
-      if (firstRequestInfo.config.headers) {
-        expect(firstRequestInfo.config.headers['Content-Type']).toEqual(
+      if (fetchMock.lastOptions().headers) {
+        expect(fetchMock.lastOptions().headers['Content-Type']).toEqual(
           'application/x-www-form-urlencoded',
         );
       }
@@ -282,7 +273,11 @@ describe('request', () => {
     test('with embed', () => {
       const wykop = new Wykop({ appKey: 'aaa', appSecret: 'aaa' });
       const file = fileMock.create();
-
+      fetchMock.post(/Login\/Index/g, {
+        data: {
+          data: { user: { login: 'QWERTY' } },
+        },
+      });
       wykop
         .request({
           methods: ['Login', 'Index'],
@@ -290,18 +285,11 @@ describe('request', () => {
         })
         .then((res) => expect(res.data.user.login).toEqual('QWERTY'));
 
-      const firstRequestInfo = mockAxios.lastReqGet();
+      expect(fetchMock.lastUrl()).toEqual('https://a2.wykop.pl/Login/Index/appkey/aaa/');
 
-      mockAxios.mockResponse({
-        data: {
-          data: { user: { login: 'QWERTY' } },
-        },
-      });
-      expect(firstRequestInfo.url).toEqual('https://a2.wykop.pl/Login/Index/appkey/aaa/');
-
-      if (firstRequestInfo.config.headers) {
-        expect(firstRequestInfo.config.headers.apisign).toEqual('cdd16ee0beb50ed2f8b24bb9a8c87176');
-        expect(firstRequestInfo.config.headers['Content-Type']).toBeUndefined();
+      if (fetchMock.lastOptions().headers) {
+        expect(fetchMock.lastOptions().headers.apisign).toEqual('cdd16ee0beb50ed2f8b24bb9a8c87176');
+        expect(fetchMock.lastOptions().headers['Content-Type']).toBeUndefined();
       }
     });
   });
