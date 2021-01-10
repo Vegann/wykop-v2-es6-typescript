@@ -134,8 +134,8 @@ export default class Wykop {
           }
           throw new Error('Network problem');
         })
-        .then(({ data: result }: { data: IData }) => {
-          if (result?.error) return reject(result.error);
+        .then((result: { data: IData }) => {
+          if (result?.data?.error) return reject(result.data.error);
           if (result?.data?.userkey) {
             this.userkey = result.data.userkey;
           }
