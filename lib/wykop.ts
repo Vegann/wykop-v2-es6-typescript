@@ -134,13 +134,13 @@ export default class Wykop {
           }
           throw new Error('Network problem');
         })
-        .then(({ data }: { data: IData }) => {
-          if (data?.error) return reject(data.error);
-          if (data?.data.userkey) {
-            this.userkey = data.data.userkey;
+        .then(({ data: result }: { data: IData }) => {
+          if (result?.error) return reject(result.error);
+          if (result?.data?.userkey) {
+            this.userkey = result.data.userkey;
           }
 
-          return resolve(data);
+          return resolve(result);
         })
         .catch((error: Error) => reject(error));
     });
