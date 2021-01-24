@@ -96,7 +96,7 @@ describe('request', () => {
   it('returns error if appKey is wrong', () => {
     const wykop = new Wykop({ appKey: 'asdnasdnad', appSecret: 'sdakdsajd' });
     fetchMock.get(/Entries\/Hot\/page\/1\/period\/6/g, {
-      data: { error: { message_en: 'Invalid API key', code: 1 } },
+      error: { message_en: 'Invalid API key', code: 1 },
     });
 
     wykop

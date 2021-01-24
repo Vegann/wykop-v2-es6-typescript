@@ -5,6 +5,7 @@ import { md5, convertToFormData, stringify } from './utils';
 import {
   IConfig,
   IData,
+  IError,
   INamedParams,
   IPostParams,
   IRequestParams,
@@ -134,8 +135,8 @@ export default class Wykop {
           }
           throw new Error('Network problem');
         })
-        .then((result: { data: IData }) => {
-          if (result?.data?.error) return reject(result.data.error);
+        .then((result: IData) => {
+          if (result?.error) return reject(result.error);
           if (result?.data?.userkey) {
             this.userkey = result.data.userkey;
           }
