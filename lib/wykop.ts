@@ -5,7 +5,6 @@ import { md5, convertToFormData, stringify } from './utils';
 import {
   IConfig,
   IData,
-  IError,
   INamedParams,
   IPostParams,
   IRequestParams,
